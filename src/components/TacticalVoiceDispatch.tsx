@@ -157,6 +157,7 @@ export const TacticalVoiceDispatch: React.FC<TacticalVoiceDispatchProps> = ({
   const [lastSpeechAm, setLastSpeechAm] = useState<string>('');
   const [lastSpeechPhonetic, setLastSpeechPhonetic] = useState<string>('');
   const [lastSpeechEn, setLastSpeechEn] = useState<string>('');
+  const [lastDirectiveId, setLastDirectiveId] = useState<string | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animFrameRef = useRef<number | null>(null);
@@ -370,9 +371,10 @@ export const TacticalVoiceDispatch: React.FC<TacticalVoiceDispatchProps> = ({
     setLastSpeechAm(replyPhraseAm);
     setLastSpeechPhonetic(cmd.phoneticAmharic);
     setLastSpeechEn(replyPhraseEn);
+    setLastDirectiveId(cmd.id);
     setRadioVoiceResponseAm(replyPhraseAm);
     setRadioVoiceResponseEn(replyPhraseEn);
-    speakRadioVoice(replyPhraseAm, cmd.phoneticAmharic, replyPhraseEn, selectedLang);
+    speakRadioVoice(replyPhraseAm, cmd.phoneticAmharic, replyPhraseEn, selectedLang, cmd.id);
 
     // Pan camera to tactical target
     if (onFocusLocation) {
@@ -404,76 +406,41 @@ export const TacticalVoiceDispatch: React.FC<TacticalVoiceDispatchProps> = ({
     textAm: string,
     textPhoneticAm: string,
     textEn: string,
-    langMode: 'bilingual' | 'am-ET' | 'en-US'
+    langMode: 'bilingual' | 'am-ET' | 'en-US',
+    directiveKey?: string
   ) => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.resume();
     setIsSpeakingResponse(true);
-
-    const cleanEn = tacticalAudio.sanitizeSpeechText(textEn, 'en');
-    const cleanAm = tacticalAudio.sanitizeSpeechText(textAm, 'am');
-    const cleanPhonetic = tacticalAudio.sanitizeSpeechText(textPhoneticAm, 'en');
-
-    // BILINGUAL MODE: Speaks English FIRST, then immediately follows with Amharic!
-    if (langMode === 'bilingual') {
-      tacticalAudio.speakBilingualDispatch(cleanEn, cleanAm, cleanPhonetic, () => {
-        setIsSpeakingResponse(false);
-      });
-      return;
-    }
 
     // AMHARIC ONLY
     if (langMode === 'am-ET') {
-      const voices = window.speechSynthesis.getVoices();
-      const amVoice = voices.find(
-        (v) =>
-          v.lang.startsWith('am') ||
-          v.lang.toLowerCase().includes('et') ||
-          v.name.toLowerCase().includes('amharic')
+      tacticalAudio.playAmharicAudio(
+        directiveKey || textAm,
+        () => setIsSpeakingResponse(false),
+        textPhoneticAm
       );
+      return;
+    }
 
-      const utterAm = new SpeechSynthesisUtterance(amVoice ? cleanAm : cleanPhonetic || cleanAm);
-      utterAm.rate = amVoice ? 0.95 : 0.88;
-      utterAm.pitch = 0.94;
-      if (amVoice) {
-        utterAm.voice = amVoice;
-        utterAm.lang = amVoice.lang || 'am-ET';
-      } else {
-        const enVoice = voices.find((v) => v.lang.startsWith('en'));
-        if (enVoice) utterAm.voice = enVoice;
-        utterAm.lang = 'en-US';
-      }
-      utterAm.onend = () => setIsSpeakingResponse(false);
-      utterAm.onerror = () => setIsSpeakingResponse(false);
-      tacticalAudio.playTacticalClick();
-      window.speechSynthesis.speak(utterAm);
+    // BILINGUAL MODE: Speaks English FIRST, then immediately follows with Amharic!
+    if (langMode === 'bilingual') {
+      tacticalAudio.speakBilingualDispatch(
+        textEn,
+        textAm,
+        textPhoneticAm,
+        () => setIsSpeakingResponse(false),
+        directiveKey
+      );
       return;
     }
 
     // ENGLISH ONLY
-    const voices = window.speechSynthesis.getVoices();
-    const enVoice =
-      voices.find(
-        (v) =>
-          v.lang.startsWith('en') &&
-          (v.name.includes('Natural') ||
-            v.name.includes('Google') ||
-            v.name.includes('David') ||
-            v.name.includes('Samantha') ||
-            v.name.includes('Alex'))
-      ) || voices.find((v) => v.lang.startsWith('en'));
-
-    const utterEn = new SpeechSynthesisUtterance(cleanEn);
-    utterEn.rate = 1.0;
-    utterEn.pitch = 0.96;
-    utterEn.lang = 'en-US';
-    if (enVoice) utterEn.voice = enVoice;
-    utterEn.onend = () => setIsSpeakingResponse(false);
-    utterEn.onerror = () => setIsSpeakingResponse(false);
-    tacticalAudio.playTacticalClick();
-    window.speechSynthesis.speak(utterEn);
+    tacticalAudio.speakTacticalDispatch(
+      textEn,
+      'en',
+      undefined,
+      undefined,
+      () => setIsSpeakingResponse(false)
+    );
   };
 
   if (!isOpen) return null;
@@ -663,10 +630,11 @@ export const TacticalVoiceDispatch: React.FC<TacticalVoiceDispatchProps> = ({
                   <button
                     onClick={() => {
                       speakRadioVoice(
-                        lastSpeechAm || radioVoiceResponseAm || '',
+                        lastSpeechAm || radioVoiceResponseAm || 'ትዕዛዝ ተፈጽሟል',
                         lastSpeechPhonetic,
-                        lastSpeechEn || radioVoiceResponseEn || '',
-                        'bilingual'
+                        lastSpeechEn || radioVoiceResponseEn || 'Directive confirmed.',
+                        'bilingual',
+                        lastDirectiveId || undefined
                       );
                     }}
                     className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold flex items-center gap-1.5 transition-all shadow cursor-pointer"
@@ -678,13 +646,14 @@ export const TacticalVoiceDispatch: React.FC<TacticalVoiceDispatchProps> = ({
                   <button
                     onClick={() => {
                       speakRadioVoice(
-                        lastSpeechAm || radioVoiceResponseAm || '',
+                        lastSpeechAm || radioVoiceResponseAm || 'ትዕዛዝ ተፈጽሟል',
                         lastSpeechPhonetic,
-                        lastSpeechEn || radioVoiceResponseEn || '',
-                        'am-ET'
+                        lastSpeechEn || radioVoiceResponseEn || 'Directive confirmed.',
+                        'am-ET',
+                        lastDirectiveId || undefined
                       );
                     }}
-                    className="px-2 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[10px] flex items-center gap-1 transition-all cursor-pointer"
+                    className="px-2 py-1 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-[10px] font-bold flex items-center gap-1 transition-all cursor-pointer shadow"
                   >
                     <span>🇪🇹 አማርኛ ብቻ</span>
                   </button>
@@ -692,10 +661,11 @@ export const TacticalVoiceDispatch: React.FC<TacticalVoiceDispatchProps> = ({
                   <button
                     onClick={() => {
                       speakRadioVoice(
-                        lastSpeechAm || radioVoiceResponseAm || '',
+                        lastSpeechAm || radioVoiceResponseAm || 'ትዕዛዝ ተፈጽሟል',
                         lastSpeechPhonetic,
-                        lastSpeechEn || radioVoiceResponseEn || '',
-                        'en-US'
+                        lastSpeechEn || radioVoiceResponseEn || 'Directive confirmed.',
+                        'en-US',
+                        lastDirectiveId || undefined
                       );
                     }}
                     className="px-2 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[10px] flex items-center gap-1 transition-all cursor-pointer"

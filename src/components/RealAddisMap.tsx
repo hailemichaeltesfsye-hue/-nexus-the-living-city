@@ -22,7 +22,9 @@ import { SelfHealingGrid } from './SelfHealingGrid';
 import { DroneCockpit } from './DroneCockpit';
 import { TacticalVoiceDispatch } from './TacticalVoiceDispatch';
 import { LiveDebateWarRoom } from './LiveDebateWarRoom';
+import { MetaHackathonJudgePanel } from './MetaHackathonJudgePanel';
 import { soundEngine } from '../audio/SoundEngine';
+import { cityEngine } from '../simulation/cityEngine';
 import {
   Zap,
   Car,
@@ -41,6 +43,7 @@ import {
   Mic,
   MessageSquare,
   Sparkles,
+  Award,
 } from 'lucide-react';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -749,6 +752,7 @@ export const RealAddisMap = forwardRef<ThreeCityCanvasHandle, RealAddisMapProps>
     const [isCrisisPanelOpen, setIsCrisisPanelOpen] = useState<boolean>(false);
     const [isVoiceDispatchOpen, setIsVoiceDispatchOpen] = useState<boolean>(false);
     const [isDebateRoomOpen, setIsDebateRoomOpen] = useState<boolean>(false);
+    const [isJudgePanelOpen, setIsJudgePanelOpen] = useState<boolean>(false);
 
     // Subscribe to live external Addis Ababa telemetry
     const [realtimeState, setRealtimeState] = useState<RealtimeAddisState>(() =>
@@ -1403,6 +1407,38 @@ export const RealAddisMap = forwardRef<ThreeCityCanvasHandle, RealAddisMapProps>
           }}
         />
 
+        {/* ── Meta Global AI Developer Hackathon Evaluator Deck ── */}
+        <MetaHackathonJudgePanel
+          isOpen={isJudgePanelOpen}
+          onClose={() => setIsJudgePanelOpen(false)}
+          onTriggerScenario={(scenarioId) => {
+            if (scenarioId === 'kazanchis-flood') {
+              setHazardActive(true);
+              setIsCrisisPanelOpen(true);
+              mapRef.current?.flyTo({
+                center: [38.7692, 9.0185],
+                zoom: 16.4,
+                pitch: 65,
+                bearing: -25,
+                duration: 2500,
+              });
+            } else if (scenarioId === 'gerd-healing') {
+              cityEngine.actuateGERDStabilization();
+              setIsCrisisPanelOpen(true);
+              mapRef.current?.flyTo({
+                center: [38.7510, 8.9890],
+                zoom: 15.8,
+                pitch: 65,
+                bearing: -20,
+                duration: 2500,
+              });
+            }
+          }}
+          onOpenWarRoom={() => setIsDebateRoomOpen(true)}
+          onOpenVoiceDispatch={() => setIsVoiceDispatchOpen(true)}
+          onOpenDroneHUD={() => setIsDroneOpen(true)}
+        />
+
         {/* ── Crisis & Autonomous Self-Healing City Grid Telemetry Panel ── */}
         {(isCrisisPanelOpen || hazardActive) && (
           <div className="absolute bottom-24 left-20 z-20 w-[440px] max-w-[92vw] pointer-events-auto">
@@ -1653,6 +1689,20 @@ export const RealAddisMap = forwardRef<ThreeCityCanvasHandle, RealAddisMapProps>
           >
             <Zap className="w-3.5 h-3.5" />
             <span>SELF-HEALING GRID</span>
+          </button>
+
+          {/* Meta Global AI Hackathon Evaluator & Architecture Deck */}
+          <button
+            id="nexus-hackathon-judge-btn"
+            onClick={() => {
+              soundEngine.playUiClick();
+              setIsJudgePanelOpen(true);
+            }}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-blue-400 bg-gradient-to-r from-blue-600/40 via-cyan-500/30 to-purple-600/40 hover:from-blue-600/60 hover:to-cyan-500/50 text-white text-xs font-mono font-bold transition-all shadow-[0_0_20px_rgba(59,130,246,0.6)] cursor-pointer"
+            title="Open Meta Global AI Hackathon ($150K) Evaluator Deck & Architecture Matrix"
+          >
+            <Award className="w-3.5 h-3.5 text-cyan-300 animate-bounce" />
+            <span>🏆 META HACKATHON ($150K)</span>
           </button>
 
           {/* Amharic & English Tactical Voice Dispatch Button */}

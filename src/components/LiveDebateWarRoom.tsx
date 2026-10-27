@@ -222,13 +222,15 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
           turn.textEn,
           turn.textAm,
           turn.phoneticAm,
-          advanceToNext
+          advanceToNext,
+          `debate_turn_${turn.id}`
         );
       } else if (lang === 'am') {
-        const voices = typeof window !== 'undefined' && 'speechSynthesis' in window ? window.speechSynthesis.getVoices() : [];
-        const hasAmVoice = voices.some((v) => v.lang.startsWith('am') || v.lang.toLowerCase().includes('et'));
-        const spokenAm = hasAmVoice ? turn.textAm : turn.phoneticAm;
-        tacticalAudio.speakWithAgentVoice(turn.role, spokenAm, 'am', advanceToNext);
+        tacticalAudio.playAmharicAudio(
+          `debate_turn_${turn.id}`,
+          advanceToNext,
+          turn.phoneticAm
+        );
       } else {
         tacticalAudio.speakWithAgentVoice(turn.role, turn.textEn, 'en', advanceToNext);
       }
@@ -238,9 +240,7 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
 
   const handleStartSimulatedDebate = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
+    tacticalAudio.stopAllAudio();
     setCurrentStep(1);
     setIsPlayingAuto(true);
     setIsActuated(false);
@@ -251,9 +251,7 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
 
   const handleStopOrReset = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
+    tacticalAudio.stopAllAudio();
     setCurrentStep(CINEMATIC_DEBATE_SCRIPT.length);
     setIsPlayingAuto(false);
     setActiveSpeaker(null);
@@ -264,9 +262,7 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
   useEffect(() => {
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-      }
+      tacticalAudio.stopAllAudio();
     };
   }, []);
 
