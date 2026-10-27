@@ -65,60 +65,98 @@ const setupMapbox429Shield = () => {
     0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82,
   ]);
 
-  window.fetch = async (...args) => {
-    const url = typeof args[0] === 'string' ? args[0] : (args[0] as Request)?.url || '';
-    if (url.includes('api.mapbox.com')) {
-      try {
-        const res = await originalFetch(...args);
-        if (res.status === 429) {
-          const isRaster = url.includes('.png') || url.includes('.webp') || url.includes('.jpg');
-          if (isRaster) {
-            return new Response(transparentPng, {
+  if (originalFetch) {
+    const patchedFetch = async (...args: Parameters<typeof fetch>) => {
+      const url = typeof args[0] === 'string' ? args[0] : (args[0] as Request)?.url || '';
+      if (url.includes('api.mapbox.com')) {
+        try {
+          const res = await originalFetch(...args);
+          if (res.status === 429) {
+            const isRaster = url.includes('.png') || url.includes('.webp') || url.includes('.jpg');
+            if (isRaster) {
+              return new Response(transparentPng, {
+                status: 200,
+                headers: { 'Content-Type': 'image/png', 'X-Nexus-Shield': 'Fallback' },
+              });
+            }
+            return new Response(new ArrayBuffer(0), {
               status: 200,
-              headers: { 'Content-Type': 'image/png', 'X-Nexus-Shield': 'Fallback' },
+              headers: { 'Content-Type': 'application/x-protobuf', 'X-Nexus-Shield': 'Fallback' },
             });
           }
-          return new Response(new ArrayBuffer(0), {
-            status: 200,
-            headers: { 'Content-Type': 'application/x-protobuf', 'X-Nexus-Shield': 'Fallback' },
-          });
+          return res;
+        } catch {
+          return new Response(new ArrayBuffer(0), { status: 200 });
         }
-        return res;
+      }
+      return originalFetch(...args);
+    };
+
+    try {
+      Object.defineProperty(window, 'fetch', {
+        value: patchedFetch,
+        configurable: true,
+        writable: true,
+      });
+    } catch {
+      try {
+        (window as any).fetch = patchedFetch;
       } catch {
-        return new Response(new ArrayBuffer(0), { status: 200 });
+        // window.fetch has only a getter in this iframe environment; transformRequest and console filtering handle 429s safely
       }
     }
-    return originalFetch(...args);
-  };
+  }
 
   const origError = console.error;
   const origWarn = console.warn;
 
-  console.error = (...args: any[]) => {
-    const text = args.map((a) => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
-    if (
-      text.includes('429') ||
-      text.includes('Too Many Requests') ||
-      (text.includes('Failed to load tile') && text.includes('mapbox')) ||
-      text.includes('mapbox.mapbox-terrain-dem-v1')
-    ) {
-      return; // Silenced safely
-    }
-    origError.apply(console, args);
-  };
+  try {
+    console.error = (...args: any[]) => {
+      const text = args.map((a) => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
+      if (
+        text.includes('429') ||
+        text.includes('Too Many Requests') ||
+        (text.includes('Failed to load tile') && text.includes('mapbox')) ||
+        text.includes('mapbox.mapbox-terrain-dem-v1')
+      ) {
+        return; // Silenced safely
+      }
+      origError.apply(console, args);
+    };
 
-  console.warn = (...args: any[]) => {
-    const text = args.map((a) => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
-    if (text.includes('429') || text.includes('Too Many Requests') || text.includes('status')) {
-      return; // Silenced safely
-    }
-    origWarn.apply(console, args);
-  };
+    console.warn = (...args: any[]) => {
+      const text = args.map((a) => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
+      if (text.includes('429') || text.includes('Too Many Requests') || text.includes('status')) {
+        return; // Silenced safely
+      }
+      origWarn.apply(console, args);
+    };
+  } catch {
+    // Ignore console interception if restricted
+  }
 
   shieldCleanup = () => {
-    window.fetch = originalFetch;
-    console.error = origError;
-    console.warn = origWarn;
+    if (originalFetch) {
+      try {
+        Object.defineProperty(window, 'fetch', {
+          value: originalFetch,
+          configurable: true,
+          writable: true,
+        });
+      } catch {
+        try {
+          (window as any).fetch = originalFetch;
+        } catch {
+          // ignore
+        }
+      }
+    }
+    try {
+      console.error = origError;
+      console.warn = origWarn;
+    } catch {
+      // ignore
+    }
     delete (window as any).__nexusMapboxShieldActive;
   };
 };
