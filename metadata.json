@@ -1,0 +1,6 @@
+{
+  "name": "NEXUS: The Living City",
+  "description": "An Autonomous AI Digital Twin for Ethiopia — interactive 3D command center and multi-agent simulation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
