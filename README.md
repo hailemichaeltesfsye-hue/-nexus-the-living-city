@@ -1,17 +1,48 @@
 # NEXUS: The Living City — Autonomous AI Digital Twin & Multi-Agent Metropolitan OS for Addis Ababa (ኔክሰስ አዲስ አበባ)
 
+[![Meta Global AI Hackathon](https://img.shields.io/badge/Meta_Global_AI_Hackathon-$150K_Grand_Challenge-blue.svg?style=for-the-badge&logo=meta&logoColor=white)](https://meta.devpost.com/)
+[![Meta Llama 3.3 70B](https://img.shields.io/badge/Cognitive_Core-Meta_Llama_3.3_70B_Instruct-7c3aed.svg?style=for-the-badge&logo=meta&logoColor=white)](https://ai.meta.com/llama/)
+[![Modal Serverless GPU](https://img.shields.io/badge/Compute_Partner-Modal_H100_Serverless_GPU_($100_Grant)-22c55e.svg?style=for-the-badge)](https://modal.com/)
+[![Meta SAM Perception](https://img.shields.io/badge/Perception_Layer-Meta_SAM_Vision-06b6d4.svg?style=for-the-badge&logo=meta&logoColor=white)](https://segment-anything.com/)
+[![Llama-Guard 3](https://img.shields.io/badge/Safety_Floor-Llama--Guard_3_Constitutional_AI-10b981.svg?style=for-the-badge&logo=meta&logoColor=white)](https://ai.meta.com/)
+[![Vercel Deployment](https://img.shields.io/badge/Vercel-Production_Live_Ready-000000.svg?style=for-the-badge&logo=vercel&logoColor=white)](https://nexus-the-living-city.vercel.app)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=for-the-badge)](https://opensource.org/licenses/Apache-2.0)
-[![React 19](https://img.shields.io/badge/React-19.0.1-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Mapbox GL JS](https://img.shields.io/badge/Mapbox_GL_JS-v3.x_Globe_3D-000000?style=for-the-badge&logo=mapbox&logoColor=white)](https://www.mapbox.com/)
-[![Three.js](https://img.shields.io/badge/Three.js-0.186-black?style=for-the-badge&logo=three.js&logoColor=white)](https://threejs.org/)
-[![Llama 3.2 Vision](https://img.shields.io/badge/Vision_AI-Llama_3.2_Vision-9333ea?style=for-the-badge&logo=meta&logoColor=white)](https://ai.meta.com/)
-[![Llama-Guard 3](https://img.shields.io/badge/Safety-Llama--Guard_3_Constitutional_AI-10b981?style=for-the-badge&logo=meta&logoColor=white)](https://ai.meta.com/)
-[![Live APIs: Open-Meteo](https://img.shields.io/badge/Live_APIs-Open--Meteo_Weather_&_AQI-ff6b6b?style=for-the-badge)](https://open-meteo.com/)
-[![Satellite Tracking: ISS](https://img.shields.io/badge/Satellite-ISS_Live_Telemetry_//_ESSGI-9333ea?style=for-the-badge)](https://wheretheiss.at/)
-[![Web Audio API](https://img.shields.io/badge/Audio-Procedural_SFX_Engine-00f2ff?style=for-the-badge)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4.3-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Vite](https://img.shields.io/badge/Vite-8.3-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+
+---
+
+## 🏆 Meta Global AI Developer Hackathon Submission Highlights
+
+| Attribute | Official Verified Submission Details |
+| :--- | :--- |
+| **Project Title** | **NEXUS: The Living City** (Autonomous Multi-Agent Urban Governance Simulation for Addis Ababa) |
+| **Author & Lead** | **Hailemichael Tesfaye Mekuria** (`hailemichaeltesfsye@gmail.com`) |
+| **Live Production URL** | **[https://nexus-the-living-city.vercel.app](https://nexus-the-living-city.vercel.app)** |
+| **GitHub Repository** | **[https://github.com/hailemichaeltesfsye-hue/-nexus-the-living-city](https://github.com/hailemichaeltesfsye-hue/-nexus-the-living-city)** |
+| **Primary Meta Model** | **Meta Llama 3.3 70B Instruct** (Reasoning core for 11 autonomous municipal agents) |
+| **Safety & Invariants** | **Meta Llama-Guard 3** (Constitutional AI safety floor & trauma corridor protection) |
+| **Aerial Perception** | **Meta SAM 3 (Segment Anything Model)** (Zero-shot infrastructure & flood polygon segmentation) |
+| **Official Compute Partner** | **Modal Serverless H100 GPUs** (Workspace: `hailemichaeltesfsye` • $101.00 USD Active Grant • Code: `FWQ-TM6-WWS` • Active Token: `ak-1hhcOZjs...7pE`) |
+| **Voice Synthesis** | **Dual Spoken Audio Dispatch** (Native Ethiopian Amharic + International English) |
+
+---
+
+## 📸 Production Interface & Verification Gallery
+
+<div align="center">
+
+### 1. 3D Digital Twin & 11-Agent Autonomous Governance Interface
+![NEXUS Live Interface](docs/screenshots/nexus-live-interface.png)
+
+### 2. Official $100 Modal Compute Credit Grant Approval (Meta Hackathon Cohort)
+![Modal Credit Confirmation](docs/screenshots/modal-100-credit-approved.png)
+
+### 3. Active Modal API Tokens & Serverless GPU Configuration
+![Modal API Tokens](docs/screenshots/modal-api-tokens.png)
+
+### 4. Vercel Production Deployment Status (100% Ready & Live)
+![Vercel Production Ready](docs/screenshots/vercel-production-ready.png)
+
+</div>
 
 ---
 
