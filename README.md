@@ -26,21 +26,45 @@
 
 ---
 
-## 📸 Production Interface & Verification Gallery
+## 📸 NEXUS Interactive Production Interface Gallery
 
 <div align="center">
 
-### 1. 3D Digital Twin & 11-Agent Autonomous Governance Interface
-![NEXUS Live Interface](docs/screenshots/nexus-live-interface.png)
+### 1. 11-Agent Peer-to-Peer Neural Mesh & Central Supervisor Consensus Core
+*Visualizing the 55 active dynamic synapses connecting all 11 autonomous municipal agents across Addis Ababa.*
+![NEXUS Multi-Agent Intelligence Network](docs/screenshots/01-agent-synapse-network.png)
 
-### 2. Official $100 Modal Compute Credit Grant Approval (Meta Hackathon Cohort)
-![Modal Credit Confirmation](docs/screenshots/modal-100-credit-approved.png)
+### 2. Orbital 3D Earth Surveillance Deck & Hypersonic Space Descent
+*Global satellite tracking, ESSGI telemetry, Entoto orbital lock (99%), and real-time transition to ground street canyons.*
+![Orbital Surveillance & Globe View](docs/screenshots/02-orbital-earth-descent.png)
 
-### 3. Active Modal API Tokens & Serverless GPU Configuration
-![Modal API Tokens](docs/screenshots/modal-api-tokens.png)
+### 3. Drone Vision HUD with Meta SAM 3.1 & Llama 3.2 Multi-Modal Perception
+*Zero-shot aerial edge segmentation of roads, flood basins, and trauma corridors with live 60 FPS telemetry stream.*
+![Drone Vision SAM 3.1 & Llama 3.2](docs/screenshots/03-drone-vision-sam-multimodal.png)
 
-### 4. Vercel Production Deployment Status (100% Ready & Live)
-![Vercel Production Ready](docs/screenshots/vercel-production-ready.png)
+### 4. Incident Response & Crisis Command Center
+*Autonomous event detection, Kilinto transformer overheat mitigation, and Bole high-speed transit pod collision triage.*
+![Incident Response & Crisis Command](docs/screenshots/04-incident-crisis-command.png)
+
+### 5. Future Simulator & Parametric Stress-Testing Lab
+*Simulating a +30% metropolitan population expansion, 28% traffic surge, and calculating overall City Resilience Score (50/100).*
+![Future Simulator & Scenario Lab](docs/screenshots/05-future-simulator-stress-lab.png)
+
+### 6. 8-District Metropolitan Infrastructure Grid
+*Real-time power draw, water, and traffic monitoring across Bole, Kazanchis, Piassa, Arat Kilo, Entoto, Gotera, Kilinto, and Meskel.*
+![Metropolitan Infrastructure Grid](docs/screenshots/06-metropolitan-infrastructure-grid.png)
+
+### 7. Addis Ababa 2035 Generative Vision Twin (Meta Muse AI)
+*Generative smart twin baseline comparing current 2026 infrastructure against 2035 autonomous maglev and subterranean flood siphons.*
+![Addis Ababa 2035 Generative Vision](docs/screenshots/07-addis-2035-generative-vision.png)
+
+### 8. Live Metropolitan Telemetry & Multi-System Sensor KPIs
+*Real-time sensor lattice monitoring Traffic Density (98%), GERD Grid Load (2,313 MW), Water Draw (385 MLD), and Hospital Beds (74%).*
+![Real-Time Telemetry & KPIs](docs/screenshots/08-realtime-telemetry-kpis.png)
+
+### 9. Episodic City Memory Archive & Llama-Guard 3 Safety Audits
+*Vectorized historical memory archive indexing past crisis resolutions, neural takeaways, and constitutional safety audit scores (92/100).*
+![Episodic City Memory Archive](docs/screenshots/09-episodic-memory-archive.png)
 
 </div>
 
