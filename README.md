@@ -780,9 +780,27 @@ To experience and verify all 7 flagship miracle systems within 60 seconds:
 nexus-the-living-city/
 ├── .env.example                         # Environment configuration template
 ├── README.md                            # Executive-grade technical documentation
+├── modal_llama.py                       # Serverless vLLM Llama 3.3 70B deployment script for Modal GPU
 ├── index.html                           # Main entry HTML importing Chakra Petch & Ethiopic fonts
 ├── package.json                         # Dependencies, scripts, and build parameters
 ├── vite.config.ts                       # Vite 8 bundler configuration with Tailwind v4
+│
+├── docs/
+│   └── screenshots/                     # 9 High-resolution production UI showcase screenshots
+│       ├── 01-orbital-earth-descent.png
+│       ├── 02-agent-synapse-network.png
+│       ├── 03-drone-vision-sam-multimodal.png
+│       ├── 04-incident-crisis-command.png
+│       ├── 05-future-simulator-stress-lab.png
+│       ├── 06-metropolitan-infrastructure-grid.png
+│       ├── 07-realtime-telemetry-kpis.png
+│       ├── 08-addis-2035-generative-vision.png
+│       └── 09-episodic-memory-archive.png
+│
+├── public/
+│   ├── audio/
+│   │   └── amharic/                     # Pre-rendered native Ethiopian Amharic spoken audio for all 11 agents
+│   └── favicon.svg                      # Holographic NEXUS geometric seal
 │
 └── src/
     ├── App.tsx                          # Root orchestrator: dual-engine selector, navigation, modals
@@ -797,7 +815,7 @@ nexus-the-living-city/
     │   ├── AgentsView.tsx               # Full P2P neural constellation, moving synapse particles, synergy test
     │   ├── AnalyticsView.tsx            # Real-time SVG telemetry trend charts (power, water, traffic)
     │   ├── AuditLog.tsx                 # Llama-Guard 3 Constitutional AI safety checks & override simulator
-    │   ├── BuildingInspectorModal.tsx    # Hardware telemetry & tenant occupancy inspector
+    │   ├── BuildingInspectorModal.tsx   # Hardware telemetry & tenant occupancy inspector
     │   ├── CinemaTour.tsx               # 5-stop 60 FPS automated camera fly-through controller
     │   ├── CinematicOverlay.tsx         # 16-step cinematic showcase demo banner
     │   ├── CityMemoryView.tsx           # Chronological audit log of resolved city incidents
@@ -807,11 +825,14 @@ nexus-the-living-city/
     │   ├── HazardOverlay.tsx            # Dynamic pulsing GeoJSON heatmap & evacuation corridor polyline
     │   ├── IncidentsView.tsx            # Active crisis tracker & manual incident injector
     │   ├── InfrastructureView.tsx       # Master registry for 8 districts and 12 critical facilities
-    │   ├── NavigationSidebar.tsx        # Left tactical mission control rail
+    │   ├── LiveDebateWarRoom.tsx        # 11-Agent live spoken audio debate war room (Amharic & English)
+    │   ├── MetaHackathonJudgePanel.tsx  # Official Evaluator HUD for Meta Global AI Hackathon ($150K)
+    │   ├── NavigationSidebar.tsx        # Left tactical mission control rail with 1-click Share on X
     │   ├── OnboardingModal.tsx          # First-time tactical orientation briefing
     │   ├── RealAddisMap.tsx             # Mapbox Geospatial 3D Twin + Hazard & Drone overlays + HUD controls
     │   ├── SelfHealingGrid.tsx          # Autonomous 5-sec self-healing grid transition & district health badges
     │   ├── SupervisorIntelligencePanel.tsx # Right AI reasoning panel, live Addis telemetry card, Critic & Judge
+    │   ├── TacticalVoiceDispatch.tsx    # Spoken two-way voice dispatch with Amharic audio & camera fly-tos
     │   ├── ThreeCityCanvas.tsx          # Procedural WebGL Three.js canvas wrapper
     │   └── TimelineControlBar.tsx       # Bottom dock (speeds 0.5x-10x, Drone Cockpit Cam, shading)
     │
@@ -821,6 +842,7 @@ nexus-the-living-city/
     ├── services/
     │   ├── baseten.ts                   # Baseten LLM client for live agent reasoning
     │   ├── basetenAgentBrain.ts         # Agent proposal, arbitration, and Critic scoring LLM prompts
+    │   ├── modalService.ts              # Modal Serverless H100 GPU client for Meta Llama 3.3 70B
     │   └── realtimeAddisService.ts      # Open-Meteo Weather, Air Quality, ISS Telemetry & EAT mobility
     │
     ├── simulation/

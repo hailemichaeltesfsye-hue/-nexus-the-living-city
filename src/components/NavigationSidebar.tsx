@@ -185,6 +185,19 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
           <div className="text-[9.5px] text-slate-400 font-mono leading-tight">
             Agentic AI Engineer & Full Stack Web Developer
           </div>
+          <a
+            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+              "Excited to unveil NEXUS: The Living City for the @MetaAI Global AI Hackathon ($150K)! 🇪🇹 An autonomous 11-agent municipal digital twin for Addis Ababa powered by Meta Llama 3.3 70B, @modal_labs H100 GPUs, and Meta SAM with dual Amharic voice dispatch.\n\nTry the live 3D twin: https://nexus-the-living-city.vercel.app\nCode: https://github.com/hailemichaeltesfsye-hue/-nexus-the-living-city\n\n#MetaAIHackathon #BuildWithLlama #Llama3 #ModalLabs"
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full mt-2.5 flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-900/90 border border-slate-700/80 text-[10px] font-mono text-slate-300 hover:text-white hover:border-sky-500 hover:bg-slate-800 transition-all cursor-pointer shadow"
+          >
+            <svg className="w-3 h-3 fill-current text-white" viewBox="0 0 24 24">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+            <span className="font-bold tracking-wide">Share Project on X</span>
+          </a>
         </div>
       </div>
     </aside>
