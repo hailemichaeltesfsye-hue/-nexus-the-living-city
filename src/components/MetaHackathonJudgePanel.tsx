@@ -444,12 +444,14 @@ export const MetaHackathonJudgePanel: React.FC<MetaHackathonJudgePanelProps> = (
                 <p className="text-[11px] text-slate-300 leading-relaxed">
                   Modal Serverless GPU cluster powers zero-cold-start inference for <strong className="text-purple-300">Meta Llama 3.3 70B Instruct</strong> and <strong className="text-cyan-300">Meta SAM 3.1</strong> aerial vision segmentation. Sandboxed container nodes auto-scale across multi-tenant NVIDIA A100/H100 GPUs.
                 </p>
-                <div className="flex items-center gap-3 text-[10px] text-slate-400 font-mono pt-1">
+                <div className="flex flex-wrap items-center gap-3 text-[10px] text-slate-400 font-mono pt-1">
                   <span>GRANTEE: Hailemichael Tesfaye</span>
                   <span>•</span>
-                  <span>STATUS: ACTIVE & VERIFIED</span>
+                  <span>WORKSPACE: hailemichaeltesfsye</span>
                   <span>•</span>
-                  <span>TARGET: META OPEN-WEIGHT MODELS</span>
+                  <span className="text-purple-300 font-bold">TOKEN: ak-1hhcOZjs...7pE (Active)</span>
+                  <span>•</span>
+                  <span className="text-emerald-400 font-bold">CREDITS: $101.00 USD</span>
                 </div>
               </div>
 

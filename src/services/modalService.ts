@@ -27,7 +27,7 @@ export interface ModalInferenceResponse {
 }
 
 const MODAL_ENDPOINT_URL = (import.meta.env.VITE_MODAL_ENDPOINT_URL as string | undefined)?.trim();
-const MODAL_API_KEY = (import.meta.env.VITE_MODAL_API_KEY as string | undefined)?.trim();
+const MODAL_API_KEY = (import.meta.env.VITE_MODAL_API_KEY as string | undefined)?.trim() || 'ak-1hhcOZjsYGdQMcggaKt7pE';
 
 export const DEFAULT_MODAL_MODEL = 'meta-llama/Llama-3.3-70B-Instruct';
 
