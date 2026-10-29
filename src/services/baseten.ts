@@ -229,13 +229,11 @@ export async function callBaseten(request: BasetenChatRequest): Promise<BasetenR
   };
 
   try {
-    const rawKey = apiKey.replace(/^Bearer\s+/i, '').trim();
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: authHeader,
-        'Api-Key': rawKey,
       },
       body: JSON.stringify(payload),
     });
@@ -265,6 +263,26 @@ export async function callBaseten(request: BasetenChatRequest): Promise<BasetenR
     data.latencyMs = elapsed;
     return { ok: true, data };
   } catch (caught) {
+    // If direct client fetch fails (e.g. strict firewall/adblocker), attempt serverless proxy route
+    try {
+      const proxyResp = await fetch('/api/baseten', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: authHeader,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (proxyResp.ok) {
+        const data = (await proxyResp.json()) as BasetenChatResponse;
+        data.latencyMs = Math.round(performance.now() - startTime);
+        return { ok: true, data };
+      }
+    } catch {
+      // proxy fallback failed, proceed with original error
+    }
+
     // --- Network / fetch errors ---
     const message =
       caught instanceof Error
