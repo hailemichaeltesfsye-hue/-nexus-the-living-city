@@ -11,6 +11,7 @@ class TacticalAudioEngine {
   private ambientGain: GainNode | null = null;
   private currentAudioElement: HTMLAudioElement | null = null;
   private currentLanguage: 'am' | 'en' | 'bilingual' = 'bilingual';
+  private speechRate: number = 1.2; // High-speed rapid tactical cadence by default
 
   // Manifest of pre-rendered high-definition Amharic audio assets
   private readonly amharicAudioMap: Record<string, string> = {
@@ -60,12 +61,20 @@ class TacticalAudioEngine {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
       if (AudioCtx) {
         this.ctx = new AudioCtx();
-        this.startAmbientHum();
+        // startAmbientHum silenced to eliminate annoying background noise
       }
     }
     if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume();
     }
+  }
+
+  public setSpeechRate(rate: number) {
+    this.speechRate = Math.max(0.8, Math.min(2.0, rate));
+  }
+
+  public getSpeechRate(): number {
+    return this.speechRate;
   }
 
   public stopAllAudio() {
@@ -93,7 +102,7 @@ class TacticalAudioEngine {
       this.stopAllAudio();
     }
     if (this.ambientGain) {
-      this.ambientGain.gain.setValueAtTime(muted ? 0 : 0.04, this.ctx?.currentTime || 0);
+      this.ambientGain.gain.setValueAtTime(0, this.ctx?.currentTime || 0);
     }
   }
 
@@ -115,31 +124,9 @@ class TacticalAudioEngine {
     return this.currentLanguage;
   }
 
-  // Futuristic UI click / blip
+  // Futuristic UI click — silenced to prevent repetitive "dot" / ticking noise
   public playTacticalClick() {
-    if (this.isMuted) return;
-    this.initContext();
-    if (!this.ctx) return;
-
-    try {
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(800, this.ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(1400, this.ctx.currentTime + 0.04);
-
-      gain.gain.setValueAtTime(0.06, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.04);
-
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-
-      osc.start();
-      osc.stop(this.ctx.currentTime + 0.04);
-    } catch {
-      // Audio fallback
-    }
+    // Pure silence: eliminates annoying dot/tick pulse
   }
 
   // Tactical alert / conflict detection ping
@@ -199,31 +186,9 @@ class TacticalAudioEngine {
     }
   }
 
-  // Ambient cybernetic city room hum
+  // Ambient cybernetic city room hum — completely disabled to eliminate background noise
   private startAmbientHum() {
-    if (!this.ctx) return;
-    try {
-      const osc1 = this.ctx.createOscillator();
-      const osc2 = this.ctx.createOscillator();
-      this.ambientGain = this.ctx.createGain();
-
-      osc1.type = 'sine';
-      osc1.frequency.setValueAtTime(55, this.ctx.currentTime); // Low A hum
-
-      osc2.type = 'triangle';
-      osc2.frequency.setValueAtTime(110, this.ctx.currentTime);
-
-      this.ambientGain.gain.setValueAtTime(this.isMuted ? 0 : 0.03, this.ctx.currentTime);
-
-      osc1.connect(this.ambientGain);
-      osc2.connect(this.ambientGain);
-      this.ambientGain.connect(this.ctx.destination);
-
-      osc1.start();
-      osc2.start();
-    } catch {
-      // Audio fallback
-    }
+    // Pure silence: no continuous background drone hum
   }
 
   // Text sanitizer: guarantees speech synthesis NEVER speaks "dot", "period", "dash", or punctuation noise
@@ -232,13 +197,13 @@ class TacticalAudioEngine {
     let s = text;
 
     if (lang === 'am') {
-      s = s.replace(/(\d+)\.(\d+)/g, '$1 ነጥብ $2');
+      s = s.replace(/(\d+)\.(\d+)/g, '$1 $2');
       s = s.replace(/SAM\s*3\.1/gi, 'ሳም ሶስት');
       s = s.replace(/ሳ\.ሜ\.?/gi, 'ሳንቲሜትር');
       s = s.replace(/ኪ\.ሜ\.?/gi, 'ኪሎሜትር');
     } else {
-      s = s.replace(/(\d+)\.(\d+)/g, '$1 point $2');
-      s = s.replace(/SAM\s*3\.1/gi, 'SAM three point one');
+      s = s.replace(/(\d+)\.(\d+)/g, '$1 $2');
+      s = s.replace(/SAM\s*3\.1/gi, 'SAM three one');
     }
 
     s = s.replace(/\bMW\b/g, 'megawatts');
@@ -274,7 +239,6 @@ class TacticalAudioEngine {
     }
 
     this.stopAllAudio();
-    this.playTacticalClick();
 
     // Check if key matches our local pre-rendered audio files
     const localFile = this.amharicAudioMap[textOrKey] ||
@@ -289,6 +253,7 @@ class TacticalAudioEngine {
       try {
         const audio = new Audio(localFile);
         audio.volume = 1.0;
+        audio.playbackRate = this.speechRate; // Fast crisp operational tempo
         this.currentAudioElement = audio;
 
         let finished = false;
@@ -343,6 +308,7 @@ class TacticalAudioEngine {
       audio.crossOrigin = 'anonymous';
       audio.src = url;
       audio.volume = 1.0;
+      audio.playbackRate = this.speechRate;
       this.currentAudioElement = audio;
 
       let finished = false;
@@ -388,7 +354,7 @@ class TacticalAudioEngine {
 
       const targetText = amVoice ? textAm : phoneticFallback || textAm;
       const utter = new SpeechSynthesisUtterance(targetText);
-      utter.rate = amVoice ? 0.95 : 0.88;
+      utter.rate = this.speechRate * (amVoice ? 1.05 : 0.95);
       utter.pitch = 0.94;
       utter.volume = 1.0;
 
@@ -424,7 +390,6 @@ class TacticalAudioEngine {
     }
 
     this.stopAllAudio();
-    this.playTacticalClick();
 
     const cleanEn = this.sanitizeSpeechText(textEn, 'en');
 
@@ -437,7 +402,7 @@ class TacticalAudioEngine {
     try {
       const utterEn = new SpeechSynthesisUtterance(cleanEn);
       utterEn.lang = 'en-US';
-      utterEn.rate = 1.0;
+      utterEn.rate = this.speechRate * 1.05;
       utterEn.pitch = 0.96;
       utterEn.volume = 1.0;
 
@@ -455,10 +420,10 @@ class TacticalAudioEngine {
       if (enVoice) utterEn.voice = enVoice;
 
       utterEn.onend = () => {
-        // 200ms tactical radio pause, then play crystal-clear Amharic
+        // Immediate rapid transition (30ms), then play crystal-clear Amharic
         setTimeout(() => {
           this.playAmharicAudio(directiveKey || textAm, onComplete, phoneticAm);
-        }, 200);
+        }, 30);
       };
 
       utterEn.onerror = () => {
@@ -553,13 +518,12 @@ class TacticalAudioEngine {
       utter.lang = 'en-US';
 
       utter.pitch = pitch;
-      utter.rate = rate;
+      utter.rate = this.speechRate * rate;
       utter.volume = 1.0;
 
       utter.onend = () => onEnd?.();
       utter.onerror = () => onEnd?.();
 
-      this.playTacticalClick();
       window.speechSynthesis.speak(utter);
     } catch {
       onEnd?.();
@@ -603,7 +567,7 @@ class TacticalAudioEngine {
       this.stopAllAudio();
       const cleanText = this.sanitizeSpeechText(phrase, 'en');
       const utter = new SpeechSynthesisUtterance(cleanText);
-      utter.rate = 1.0;
+      utter.rate = this.speechRate * 1.05;
       utter.pitch = 0.95;
       utter.lang = 'en-US';
 
@@ -614,7 +578,6 @@ class TacticalAudioEngine {
       utter.onend = () => onEnd?.();
       utter.onerror = () => onEnd?.();
 
-      this.playTacticalClick();
       window.speechSynthesis.speak(utter);
     } catch {
       onEnd?.();

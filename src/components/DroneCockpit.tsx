@@ -28,6 +28,7 @@ import {
   X,
 } from 'lucide-react';
 import { soundEngine } from '../audio/SoundEngine';
+import { tacticalAudio } from '../audio/tacticalAudio';
 
 // ─── Simulated drone telemetry ────────────────────────────────────────────────
 const useDroneTelemetry = () => {
@@ -160,6 +161,11 @@ export const DroneCockpit: React.FC<DroneCockpitProps> = ({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const nextId = useRef<number>(5);
 
+  // Stop any background audio or voice on mount for pure clean silent drone HUD telemetry
+  useEffect(() => {
+    tacticalAudio.stopAllAudio();
+  }, []);
+
   // Scanline animation loop
   useEffect(() => {
     let animId: number;
@@ -173,7 +179,7 @@ export const DroneCockpit: React.FC<DroneCockpitProps> = ({
     return () => cancelAnimationFrame(animId);
   }, []);
 
-  // Periodic simulated vision log
+  // Periodic simulated vision log — completely silent (no dot or tick noises)
   useEffect(() => {
     const period = hazardActive ? 2200 : 4500;
     const iv = setInterval(() => {
@@ -190,7 +196,6 @@ export const DroneCockpit: React.FC<DroneCockpitProps> = ({
         .join(':');
 
       setLog((prev) => [{ id: nextId.current++, ts, tag, severity }, ...prev.slice(0, 7)]);
-      soundEngine.playP2PSynapse();
     }, period);
 
     return () => clearInterval(iv);
@@ -238,7 +243,6 @@ export const DroneCockpit: React.FC<DroneCockpitProps> = ({
     const x = (e.clientX - rect.left) / rect.width;
     const y = (e.clientY - rect.top) / rect.height;
 
-    soundEngine.playUiClick();
     generateSegmentAtPoint(x, y);
 
     const now = new Date();
@@ -497,7 +501,6 @@ export const DroneCockpit: React.FC<DroneCockpitProps> = ({
               <button
                 onClick={() => {
                   setActiveVisionMode('sam_31');
-                  soundEngine.playUiClick();
                 }}
                 className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all ${
                   activeVisionMode === 'sam_31'
@@ -511,7 +514,6 @@ export const DroneCockpit: React.FC<DroneCockpitProps> = ({
               <button
                 onClick={() => {
                   setActiveVisionMode('llama_32');
-                  soundEngine.playUiClick();
                 }}
                 className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md transition-all ${
                   activeVisionMode === 'llama_32'

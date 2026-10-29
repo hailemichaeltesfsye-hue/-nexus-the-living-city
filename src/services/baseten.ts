@@ -297,7 +297,8 @@ export async function askNexusAgent(
     if (text) return text;
   }
 
-  console.warn('[NEXUS/Baseten] Falling back to offline response:', result.error.message);
+  const errMessage = !result.ok ? result.error.message : 'Empty response payload';
+  console.warn('[NEXUS/Baseten] Falling back to offline response:', errMessage);
   return fallback;
 }
 

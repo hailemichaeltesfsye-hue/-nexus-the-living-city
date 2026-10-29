@@ -151,11 +151,17 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
   const [currentStep, setCurrentStep] = useState<number>(CINEMATIC_DEBATE_SCRIPT.length);
   const [isPlayingAuto, setIsPlayingAuto] = useState<boolean>(false);
   const [lang, setLang] = useState<'bilingual' | 'am' | 'en'>('bilingual');
+  const [cadenceSpeed, setCadenceSpeed] = useState<number>(1.25); // Default 1.25x Rapid Cadence
   const [isVoiceMuted, setIsVoiceMuted] = useState<boolean>(false);
   const [activeSpeaker, setActiveSpeaker] = useState<string | null>(null);
   const [isActuated, setIsActuated] = useState<boolean>(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Sync tacticalAudio speed with cadence setting
+  useEffect(() => {
+    tacticalAudio.setSpeechRate(cadenceSpeed);
+  }, [cadenceSpeed]);
 
   // Auto scroll to bottom
   useEffect(() => {
@@ -200,21 +206,22 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
         soundEngine.playP2PSynapse();
       }
 
-      // If user muted voice, proceed on simple timer
+      // If user muted voice, advance rapidly
       if (isVoiceMuted) {
+        const mutedDelay = cadenceSpeed === 1.5 ? 350 : cadenceSpeed === 1.25 ? 500 : 750;
         timeoutRef.current = setTimeout(() => {
           setCurrentStep(stepIndex + 2);
           playStepSpeech(stepIndex + 1);
-        }, 1800);
+        }, mutedDelay);
         return;
       }
 
-      // Spoken voice synthesis based on language selection
+      // Spoken voice synthesis: IMMEDIATE handoff to next agent when speaker finishes!
       const advanceToNext = () => {
-        timeoutRef.current = setTimeout(() => {
-          setCurrentStep(stepIndex + 2);
-          playStepSpeech(stepIndex + 1);
-        }, 400);
+        // Zero lag: immediately transition to the next agent's proposal or objection
+        const nextIdx = stepIndex + 1;
+        setCurrentStep(nextIdx + 1);
+        playStepSpeech(nextIdx);
       };
 
       if (lang === 'bilingual') {
@@ -235,17 +242,16 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
         tacticalAudio.speakWithAgentVoice(turn.role, turn.textEn, 'en', advanceToNext);
       }
     },
-    [executeMunicipalActuation, isVoiceMuted, lang]
+    [cadenceSpeed, executeMunicipalActuation, isVoiceMuted, lang]
   );
 
   const handleStartSimulatedDebate = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     tacticalAudio.stopAllAudio();
+    tacticalAudio.setSpeechRate(cadenceSpeed);
     setCurrentStep(1);
     setIsPlayingAuto(true);
     setIsActuated(false);
-    soundEngine.playP2PCrisisSynapse();
-    tacticalAudio.playTacticalClick();
     playStepSpeech(0);
   };
 
@@ -315,12 +321,43 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
               {isVoiceMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 animate-pulse" />}
             </button>
 
+            {/* Rapid Cadence Speed Switcher */}
+            <div className="flex bg-slate-800/80 rounded-lg p-0.5 border border-slate-700 text-xs">
+              <button
+                onClick={() => setCadenceSpeed(1.0)}
+                className={`px-2 py-1 rounded transition-all ${
+                  cadenceSpeed === 1.0 ? 'bg-cyan-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'
+                }`}
+                title="Normal Cadence (1.0x)"
+              >
+                1.0x
+              </button>
+              <button
+                onClick={() => setCadenceSpeed(1.25)}
+                className={`px-2 py-1 rounded transition-all flex items-center gap-1 ${
+                  cadenceSpeed === 1.25 ? 'bg-cyan-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'
+                }`}
+                title="Rapid Tactical Cadence (1.25x - Recommended for Hackathon Demo)"
+              >
+                <Zap className="w-3 h-3 fill-current" />
+                <span>1.25x RAPID</span>
+              </button>
+              <button
+                onClick={() => setCadenceSpeed(1.5)}
+                className={`px-2 py-1 rounded transition-all ${
+                  cadenceSpeed === 1.5 ? 'bg-cyan-500 text-slate-950 font-bold' : 'text-slate-400 hover:text-white'
+                }`}
+                title="Supersonic Cadence (1.5x)"
+              >
+                1.5x
+              </button>
+            </div>
+
             {/* Language Switcher */}
             <div className="flex bg-slate-800/80 rounded-lg p-0.5 border border-slate-700 text-xs">
               <button
                 onClick={() => {
                   setLang('bilingual');
-                  soundEngine.playUiClick();
                 }}
                 className={`px-2.5 py-1 rounded transition-all ${
                   lang === 'bilingual' ? 'bg-purple-600 text-white font-bold' : 'text-slate-400 hover:text-white'
@@ -331,7 +368,6 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
               <button
                 onClick={() => {
                   setLang('am');
-                  soundEngine.playUiClick();
                 }}
                 className={`px-2 py-1 rounded transition-all ${
                   lang === 'am' ? 'bg-purple-600 text-white font-bold' : 'text-slate-400 hover:text-white'
@@ -342,7 +378,6 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
               <button
                 onClick={() => {
                   setLang('en');
-                  soundEngine.playUiClick();
                 }}
                 className={`px-2 py-1 rounded transition-all ${
                   lang === 'en' ? 'bg-purple-600 text-white font-bold' : 'text-slate-400 hover:text-white'
