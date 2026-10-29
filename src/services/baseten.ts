@@ -13,18 +13,39 @@
 // ---------------------------------------------------------------------------
 
 /**
- * Your Baseten API key, injected via Vite's env system.
- * Set VITE_BASETEN_API_KEY in your .env file or Vercel settings.
+ * Get active Baseten API key.
+ * Checks VITE_BASETEN_API_KEY from environment (Vercel / .env)
+ * or localStorage for instant browser test overrides.
  */
-const BASETEN_API_KEY = import.meta.env.VITE_BASETEN_API_KEY as string | undefined;
+export const getBasetenApiKey = (): string => {
+  const envKey = (import.meta.env.VITE_BASETEN_API_KEY as string | undefined)?.trim();
+  if (envKey && envKey !== 'your_baseten_api_key_here') return envKey;
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const local = window.localStorage.getItem('VITE_BASETEN_API_KEY') || window.localStorage.getItem('nexus_baseten_key');
+      if (local?.trim()) return local.trim();
+    }
+  } catch {}
+  return '';
+};
+
+/**
+ * Persist Baseten API key into browser localStorage for immediate live sessions.
+ */
+export const setBasetenApiKey = (key: string): void => {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.setItem('nexus_baseten_key', key.trim());
+    }
+  } catch {}
+};
 
 /**
  * Your deployed model / pipeline ID on Baseten.
- * Defaults to DeepSeek V4.1 Flash.
+ * Defaults to Hackathon Meta model: meta-models/muse-spark-open-1026.
  */
-const BASETEN_MODEL_ID =
+export const BASETEN_MODEL_ID =
   (import.meta.env.VITE_BASETEN_MODEL_ID as string | undefined)?.trim() ||
-  (import.meta.env.VITE_BASETEN_MODEL__ID as string | undefined)?.trim() ||
   'meta-models/muse-spark-open-1026';
 
 /**
@@ -32,7 +53,7 @@ const BASETEN_MODEL_ID =
  * Defaults to: https://inference.baseten.co/v1
  * Chat completions endpoint will be: ${baseUrl}/chat/completions
  */
-const resolveBaseUrl = (): string => {
+export const resolveBaseUrl = (): string => {
   let base = (import.meta.env.VITE_BASETEN_BASE_URL as string | undefined)?.trim();
 
   if (!base) {
@@ -67,15 +88,17 @@ export interface BasetenChatMessage {
 export interface BasetenChatRequest {
   /** Conversation history / prompt messages. */
   messages: BasetenChatMessage[];
+  /** Optional API key override for this single request. */
+  apiKey?: string;
   /**
    * Model name to use on the shared inference endpoint.
-   * Auto-populated from VITE_BASETEN_MODEL_ID if not provided.
-   * @example "deepseek-ai/DeepSeek-V4.1-Flash-1017-Fast"
+   * Auto-populated from BASETEN_MODEL_ID if not provided.
+   * @example "meta-models/muse-spark-open-1026"
    */
   model?: string;
   /**
    * Max tokens to generate.
-   * @default 1024
+   * @default 768
    */
   max_tokens?: number;
   /**
@@ -99,9 +122,24 @@ export interface BasetenChatChoice {
   index: number;
   message: {
     role: 'assistant';
-    content: string;
+    content: string | null;
+    reasoning_content?: string | null;
   };
   finish_reason: 'stop' | 'length' | 'tool_calls' | 'content_filter' | null;
+}
+
+/** Helper to extract readable assistant text from choice, supporting reasoning models */
+export function extractChoiceText(choice?: BasetenChatChoice): string {
+  if (!choice?.message) return '';
+  if (choice.message.content && choice.message.content.trim()) {
+    return choice.message.content.trim();
+  }
+  if (choice.message.reasoning_content && choice.message.reasoning_content.trim()) {
+    const raw = choice.message.reasoning_content.trim();
+    const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+    return lines[lines.length - 1] || raw;
+  }
+  return '';
 }
 
 /** Token usage statistics returned by Baseten. */
@@ -119,6 +157,7 @@ export interface BasetenChatResponse {
   model: string;
   choices: BasetenChatChoice[];
   usage: BasetenUsage;
+  latencyMs?: number;
 }
 
 /** Structured error returned when the request fails. */
@@ -145,38 +184,36 @@ export type BasetenResult =
  *
  * @param request - The chat request payload.
  * @returns A discriminated union of `{ ok: true, data }` or `{ ok: false, error }`.
- *
- * @example
- * const result = await callBaseten({
- *   messages: [{ role: 'user', content: 'Hello NEXUS!' }],
- * });
- * if (result.ok) console.log(result.data.choices[0].message.content);
  */
 export async function callBaseten(request: BasetenChatRequest): Promise<BasetenResult> {
   const baseUrl = resolveBaseUrl();
   const endpoint = `${baseUrl}/chat/completions`;
+  const startTime = performance.now();
+
+  const apiKey = (request.apiKey || getBasetenApiKey())?.trim();
 
   // --- Validate API key ---
-  if (!BASETEN_API_KEY) {
+  if (!apiKey) {
     const error: BasetenError = {
       message:
         'VITE_BASETEN_API_KEY is not configured. ' +
-        'Add it to your .env file and restart the dev server.',
+        'Add it to your Vercel Project Settings > Environment Variables or save it in the Evaluator HUD.',
     };
-    console.error('[NEXUS/Baseten]', error.message);
+    console.warn('[NEXUS/Baseten]', error.message);
     return { ok: false, error };
   }
 
+  // OpenAI-standard Authorization format
+  const authHeader = apiKey.startsWith('Bearer ') ? apiKey : `Bearer ${apiKey}`;
+
   // --- Build payload with safe defaults ---
-  // The shared inference endpoint (inference.baseten.co/v1) requires the
-  // model name in the body, exactly like the OpenAI API.
-  const payload: BasetenChatRequest = {
-    model: BASETEN_MODEL_ID,  // auto-inject from env; caller can override
-    max_tokens: 1024,
-    temperature: 0.7,
-    top_p: 1,
+  const payload = {
+    model: request.model || BASETEN_MODEL_ID,
+    max_tokens: request.max_tokens ?? 768,
+    temperature: request.temperature ?? 0.7,
+    top_p: request.top_p ?? 1,
     stream: false,
-    ...request,
+    messages: request.messages,
   };
 
   try {
@@ -184,11 +221,12 @@ export async function callBaseten(request: BasetenChatRequest): Promise<BasetenR
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Baseten uses `Api-Key` (not `Bearer`) for authentication.
-        Authorization: `Api-Key ${BASETEN_API_KEY}`,
+        Authorization: authHeader,
       },
       body: JSON.stringify(payload),
     });
+
+    const elapsed = Math.round(performance.now() - startTime);
 
     // --- Parse error responses ---
     if (!response.ok) {
@@ -200,7 +238,7 @@ export async function callBaseten(request: BasetenChatRequest): Promise<BasetenR
       }
 
       const error: BasetenError = {
-        message: `Baseten API responded with HTTP ${response.status}: ${JSON.stringify(raw) || response.statusText}`,
+        message: `Baseten API HTTP ${response.status}: ${typeof raw === 'object' && raw ? JSON.stringify(raw) : (raw || response.statusText)}`,
         status: response.status,
         raw,
       };
@@ -210,6 +248,7 @@ export async function callBaseten(request: BasetenChatRequest): Promise<BasetenR
 
     // --- Parse successful response ---
     const data = (await response.json()) as BasetenChatResponse;
+    data.latencyMs = elapsed;
     return { ok: true, data };
   } catch (caught) {
     // --- Network / fetch errors ---
@@ -250,10 +289,12 @@ export async function askNexusAgent(
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt },
     ],
+    max_tokens: 768,
   });
 
   if (result.ok) {
-    return result.data.choices[0]?.message?.content?.trim() ?? fallback;
+    const text = extractChoiceText(result.data.choices[0]);
+    if (text) return text;
   }
 
   console.warn('[NEXUS/Baseten] Falling back to offline response:', result.error.message);
@@ -306,19 +347,19 @@ export async function testBasetenAgent(): Promise<string> {
   console.group('[NEXUS/Baseten] Running integration test...');
   console.log('Prompt:', TEST_PROMPT);
   console.log('Endpoint base:', resolveBaseUrl());
-  console.log('API key present:', Boolean(BASETEN_API_KEY));
+  console.log('API key present:', Boolean(getBasetenApiKey()));
 
   const result = await callBaseten({
     messages: [
       { role: 'system', content: NEXUS_SYSTEM_PROMPT },
       { role: 'user', content: TEST_PROMPT },
     ],
-    max_tokens: 256,
+    max_tokens: 512,
     temperature: 0.5,
   });
 
   if (result.ok) {
-    const reply = result.data.choices[0]?.message?.content?.trim() ?? '(empty response)';
+    const reply = extractChoiceText(result.data.choices[0]) || '(empty response)';
     console.log('Success!');
     console.log('Model:', result.data.model);
     console.log('Usage:', result.data.usage);
@@ -332,3 +373,4 @@ export async function testBasetenAgent(): Promise<string> {
     return NEXUS_FALLBACK_RESPONSE;
   }
 }
+

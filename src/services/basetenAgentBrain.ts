@@ -1,4 +1,4 @@
-﻿/**
+/**
  * NEXUS: THE LIVING CITY
  * Baseten AI Agent Brain — Live DeepSeek-powered reasoning for the multi-agent system.
  *
@@ -10,7 +10,7 @@
  * continues uninterrupted.
  */
 
-import { callBaseten, NEXUS_SYSTEM_PROMPT } from './baseten';
+import { callBaseten, extractChoiceText, NEXUS_SYSTEM_PROMPT } from './baseten';
 import type { Incident, AgentId } from '../types/city';
 
 // ---------------------------------------------------------------------------
@@ -18,18 +18,19 @@ import type { Incident, AgentId } from '../types/city';
 // ---------------------------------------------------------------------------
 
 /** Run a single-turn completion with the NEXUS system persona and return the text. */
-async function nexusCompletion(userPrompt: string, fallback: string, maxTokens = 180): Promise<string> {
+async function nexusCompletion(userPrompt: string, fallback: string, maxTokens = 600): Promise<string> {
   const result = await callBaseten({
     messages: [
       { role: 'system', content: NEXUS_SYSTEM_PROMPT },
       { role: 'user', content: userPrompt },
     ],
-    max_tokens: maxTokens,
-    temperature: 0.75,
+    max_tokens: Math.max(maxTokens, 600),
+    temperature: 0.7,
   });
 
   if (result.ok) {
-    return result.data.choices[0]?.message?.content?.trim() || fallback;
+    const text = extractChoiceText(result.data.choices[0]);
+    if (text) return text;
   }
 
   console.warn('[NEXUS/Brain] Using fallback for:', userPrompt.slice(0, 60));
