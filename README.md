@@ -92,10 +92,11 @@
 10. [16-Step Cinematic Crisis Showcase Walkthrough](#10-16-step-cinematic-crisis-showcase-walkthrough)
 11. [Future Simulator, Parametric Stress Lab & City Resilience Score Formula](#11-future-simulator-parametric-stress-lab--city-resilience-score-formula)
 12. [Procedural Web Audio Synthesis & Tactical Dispatch](#12-procedural-web-audio-synthesis--tactical-dispatch)
-13. [Miracle Features & Interactive Tactical HUD Modules](#13-miracle-features--interactive-tactical-hud-modules)
-14. [Complete Directory Structure](#14-complete-directory-structure)
-15. [Local Setup & Installation](#15-local-setup--installation)
-16. [Author & Heritage](#16-author--heritage)
+13. [Core Operational Capabilities & Interactive Tactical HUD Modules](#13-core-operational-capabilities--interactive-tactical-hud-modules)
+14. [Compute Partners: Baseten & Modal Cloud Integration](#14-compute-partners-baseten--modal-cloud-integration)
+15. [Complete Directory Structure](#15-complete-directory-structure)
+16. [Local Setup & Installation](#16-local-setup--installation)
+17. [Author & Heritage](#17-author--heritage)
 
 ---
 
@@ -396,13 +397,13 @@ NEXUS contains **zero external MP3 or WAV audio dependencies**. All soundscapes 
 
 ---
 
-## 13. Miracle Features & Interactive Tactical HUD Modules
+## 13. Core Operational Capabilities & Interactive Tactical HUD Modules
 
 To maximize operational visual impact and demonstrate multi-agent metropolitan resilience under extreme physical and cybernetic stress, NEXUS integrates 7 flagship tactical systems engineered for the Addis Ababa 3D Digital Twin:
 
 ```mermaid
 graph TD
-    subgraph OVERVIEW["NEXUS Tactical Command & Miracle Feature Integration Matrix"]
+    subgraph OVERVIEW["NEXUS Tactical Command & Operational Capability Matrix"]
         HUD["Bottom Tactical HUD Bar & Command Deck"]
         HUD -->|"Simulate Hazard Button"| HAZARD["🔴 1. Hazard Overlay System<br/>(HazardOverlay.tsx)"]
         HUD -->|"Run Cinema Tour Button"| CINEMA["🎬 2. Cinema Tour Controller<br/>(CinemaTour.tsx)"]
@@ -742,7 +743,7 @@ flowchart LR
 
 ### 13.8 Step-by-Step Evaluator & Judge Testing Guide
 
-To experience and verify all 7 flagship miracle systems within 60 seconds:
+To experience and verify all 7 flagship resilience systems within 60 seconds:
 
 1. **Launch the Application**: Run `npm run dev` and open `http://localhost:5173`.
 2. **Test the Hazard Overlay**:
@@ -774,7 +775,27 @@ To experience and verify all 7 flagship miracle systems within 60 seconds:
 
 ---
 
-## 14. Complete Directory Structure
+## 14. Compute Partners: Baseten & Modal Cloud Integration
+
+NEXUS integrates compute grants and model infrastructure from Meta Global AI Developer Hackathon partners:
+
+### 14.1 Baseten ($100 Hackathon Grant — Up to 2M Tokens/Min)
+* **Model**: `meta-models/muse-spark-open-1026` / Meta Llama 3.3 70B
+* **Inference Endpoint**: `https://inference.baseten.co/v1/chat/completions` (OpenAI-compatible)
+* **Auth**: Dual-header support (`Authorization: Bearer <API_KEY>` and `Api-Key: <API_KEY>`)
+* **Role in NEXUS**: Live multi-agent cognitive conflict arbitration, domain proposal generation, and sub-second municipal actuation directives.
+* **Architecture**: Direct browser fetch with automated reasoning token extraction (`reasoning_content` & `content` normalization) and instant deterministic fallback protection ensuring zero simulation interruption.
+* **Telemetry**: Integrated into the Evaluator HUD with live round-trip latency (ms), tokens-per-second, and model safety verification.
+
+### 14.2 Modal Serverless GPU Cluster ($100 Hackathon Grant)
+* **Grant Status**: Approved ($101.00 USD credits, Top 1,000 Cohort, Claim Code: `FWQ-TM6-WWS`)
+* **Architecture**: Serverless Python container nodes auto-scaling on NVIDIA A100/H100 Tensor Core GPUs.
+* **Deployment Script**: `modal_llama.py` (vLLM engine with OpenAI-compatible API serving `meta-llama/Llama-3.3-70B-Instruct`).
+* **Aerial Vision**: Spatial polygon segmentation with Meta SAM 3.1 (`modal_sam3.py`) streaming IoU masks to the 3D digital twin.
+
+---
+
+## 15. Complete Directory Structure
 
 ```ascii
 nexus-the-living-city/
@@ -860,7 +881,7 @@ nexus-the-living-city/
 
 ---
 
-## 15. Local Setup & Installation
+## 16. Local Setup & Installation
 
 ### Prerequisites
 * **Node.js**: `v18.x`, `v20.x`, or `v22.x` (LTS recommended)
@@ -878,9 +899,15 @@ Copy `.env.example` to `.env`:
 ```bash
 cp .env.example .env
 ```
-Add your Mapbox Public Access Token (starts with `pk.eyJ...`):
+Configure your environment variables:
 ```env
+# Mapbox 3D Geospatial Twin Token
 VITE_MAPBOX_TOKEN=pk.eyJ1IjoieW91ci11c2VybmFtZSIsImEiOiJ5b3VyLXRva2VuIn0...
+
+# Baseten Meta LLM Inference (Meta Hackathon Grant)
+VITE_BASETEN_API_KEY=b10_your_baseten_api_key_here
+VITE_BASETEN_MODEL_ID=meta-models/muse-spark-open-1026
+VITE_BASETEN_BASE_URL=https://inference.baseten.co/v1
 ```
 
 ### 3. Launch Development Server
@@ -899,7 +926,7 @@ npm run build
 
 ---
 
-## 16. Author & Heritage
+## 17. Author & Heritage
 
 **NEXUS: The Living City** was conceived, architected, and engineered by:
 

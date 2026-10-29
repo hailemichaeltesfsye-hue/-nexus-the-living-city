@@ -256,7 +256,7 @@ export const TimelineControlBar: React.FC<TimelineControlBarProps> = ({
                 <span>Ambulance</span>
               </button>
 
-              {/* Miracle Feature: Drone Cockpit Cam */}
+              {/* Core Tactical Feature: Drone Cockpit Cam */}
               <button
                 onClick={() => onCameraPreset('drone')}
                 className={`px-2.5 py-0.5 rounded text-[10px] font-bold border flex items-center space-x-1 cursor-pointer transition-all ${

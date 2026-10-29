@@ -230,7 +230,7 @@ export const MetaHackathonJudgePanel: React.FC<MetaHackathonJudgePanelProps> = (
                   EXECUTIVE PITCH TO HACKATHON JUDGES
                 </div>
                 <h3 className="text-base font-bold text-white mb-2">
-                  What makes NEXUS an absolute miracle problem solver?
+                  What makes NEXUS an effective, real-world autonomous solution for municipal resilience?
                 </h3>
                 <p className="text-xs text-slate-300 leading-relaxed mb-3">
                   In rapidly expanding Global South capitals like Addis Ababa (5.4 million citizens, diplomatic hub of Africa), physical infrastructure systems fail in domino chains: a single seasonal flood at Kazanchis underpass blocks the sole critical trauma corridor to Tikur Anbessa Hospital, while 5,150 MW GERD hydro-surges blow neighborhood transformers.

@@ -541,7 +541,7 @@ export const AgentsView: React.FC<AgentsViewProps> = ({ agentState }) => {
         </div>
       </div>
 
-      {/* MIRACLE FEATURE: FULL DYNAMIC PEER-TO-PEER (P2P) MESH CONSTELLATION */}
+      {/* PRODUCTION FEATURE: FULL DYNAMIC PEER-TO-PEER (P2P) MESH CONSTELLATION */}
       {viewLayout === 'constellation' && (
         <div className="relative w-full h-[540px] rounded-2xl hud-panel border border-sky-500/40 bg-[#070c1a]/95 overflow-hidden shadow-2xl flex items-center justify-center">
           {/* Background Synapse Circuit Grid & Rings */}

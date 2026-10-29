@@ -136,8 +136,20 @@ export function extractChoiceText(choice?: BasetenChatChoice): string {
   }
   if (choice.message.reasoning_content && choice.message.reasoning_content.trim()) {
     const raw = choice.message.reasoning_content.trim();
+    // Look for quoted conclusion or action statement formulated by reasoning models
+    const quoteMatches = Array.from(raw.matchAll(/"([^"]{12,280})"/g));
+    if (quoteMatches.length > 0) {
+      return quoteMatches[quoteMatches.length - 1][1];
+    }
     const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
-    return lines[lines.length - 1] || raw;
+    const nonMetaLines = lines.slice().reverse().find(l => 
+      !l.toLowerCase().startsWith('we ') && 
+      !l.toLowerCase().startsWith('make sure') &&
+      !l.toLowerCase().startsWith('possibly') &&
+      !l.toLowerCase().startsWith('should ') &&
+      !l.toLowerCase().startsWith('let ')
+    );
+    return nonMetaLines || lines[lines.length - 1] || raw;
   }
   return '';
 }
@@ -217,11 +229,13 @@ export async function callBaseten(request: BasetenChatRequest): Promise<BasetenR
   };
 
   try {
+    const rawKey = apiKey.replace(/^Bearer\s+/i, '').trim();
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: authHeader,
+        'Api-Key': rawKey,
       },
       body: JSON.stringify(payload),
     });
