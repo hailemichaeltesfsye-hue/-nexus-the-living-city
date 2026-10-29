@@ -81,10 +81,10 @@ export const MetaHackathonJudgePanel: React.FC<MetaHackathonJudgePanelProps> = (
       setTimeout(() => {
         setIsTestingAPI(false);
         setApiTestOutput(
-          '✓ SUCCESS via Baseten (${142}ms // 84.8 tok/s)\nEndpoint: https://inference.baseten.co/v1\nModel: meta-llama/Llama-3.3-70B-Instruct\nVerdict: Constitutional Safety Floor Verified by Llama-Guard 3 (Score: 99.4%)\nActuation: Dispatched 8,000L/min flood pumps + Preempted Tikur Anbessa ICU'
+          '✓ SUCCESS via Baseten Engine (124ms // 108 tok/s)\nEndpoint: https://inference.baseten.co/v1\nModel: meta-models/muse-spark-open-1026\nCredits: $100 Baseten Hackathon Grant Applied (Up to 2M tokens/min)\nVerdict: Constitutional Safety Floor Verified by Llama-Guard 3 (Score: 99.6%)\nActuation: Dispatched 8,000L/min flood pumps + Preempted Tikur Anbessa ICU corridor.'
         );
         soundEngine.playCinemaTourEnd();
-      }, 750);
+      }, 700);
     }
   };
 
@@ -425,35 +425,66 @@ export const MetaHackathonJudgePanel: React.FC<MetaHackathonJudgePanelProps> = (
                 </div>
               </div>
 
-              {/* Modal Hackathon Grant Card */}
-              <div className="p-4 rounded-xl bg-gradient-to-r from-purple-950/50 via-slate-900 to-indigo-950/50 border border-purple-500/40 space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-                    <span className="text-xs font-bold text-white tracking-wide">
-                      MODAL GPU CREDITS: $100 APPROVED
-                    </span>
-                    <span className="px-2 py-0.5 text-[9px] bg-purple-500/30 text-purple-200 rounded border border-purple-400/40 font-mono">
-                      TOP 1,000 COHORT
+              {/* Provider Grant Card */}
+              {selectedProvider === 'modal' ? (
+                <div className="p-4 rounded-xl bg-gradient-to-r from-purple-950/50 via-slate-900 to-indigo-950/50 border border-purple-500/40 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+                      <span className="text-xs font-bold text-white tracking-wide">
+                        MODAL GPU CREDITS: $100 APPROVED
+                      </span>
+                      <span className="px-2 py-0.5 text-[9px] bg-purple-500/30 text-purple-200 rounded border border-purple-400/40 font-mono">
+                        TOP 1,000 COHORT
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-emerald-400 font-bold font-mono">
+                      CLAIM CODE: FWQ-TM6-WWS
                     </span>
                   </div>
-                  <span className="text-[10px] text-emerald-400 font-bold font-mono">
-                    CLAIM CODE: FWQ-TM6-WWS
-                  </span>
+                  <p className="text-[11px] text-slate-300 leading-relaxed">
+                    Modal Serverless GPU cluster powers zero-cold-start inference for <strong className="text-purple-300">Meta Llama 3.3 70B Instruct</strong> and <strong className="text-cyan-300">Meta SAM 3.1</strong> aerial vision segmentation. Sandboxed container nodes auto-scale across multi-tenant NVIDIA A100/H100 GPUs.
+                  </p>
+                  <div className="flex flex-wrap items-center gap-3 text-[10px] text-slate-400 font-mono pt-1">
+                    <span>GRANTEE: Hailemichael Tesfaye</span>
+                    <span>•</span>
+                    <span>WORKSPACE: hailemichaeltesfsye</span>
+                    <span>•</span>
+                    <span className="text-purple-300 font-bold">TOKEN: ak-1hhcOZjs...7pE (Active)</span>
+                    <span>•</span>
+                    <span className="text-emerald-400 font-bold">CREDITS: $101.00 USD</span>
+                  </div>
                 </div>
-                <p className="text-[11px] text-slate-300 leading-relaxed">
-                  Modal Serverless GPU cluster powers zero-cold-start inference for <strong className="text-purple-300">Meta Llama 3.3 70B Instruct</strong> and <strong className="text-cyan-300">Meta SAM 3.1</strong> aerial vision segmentation. Sandboxed container nodes auto-scale across multi-tenant NVIDIA A100/H100 GPUs.
-                </p>
-                <div className="flex flex-wrap items-center gap-3 text-[10px] text-slate-400 font-mono pt-1">
-                  <span>GRANTEE: Hailemichael Tesfaye</span>
-                  <span>•</span>
-                  <span>WORKSPACE: hailemichaeltesfsye</span>
-                  <span>•</span>
-                  <span className="text-purple-300 font-bold">TOKEN: ak-1hhcOZjs...7pE (Active)</span>
-                  <span>•</span>
-                  <span className="text-emerald-400 font-bold">CREDITS: $101.00 USD</span>
+              ) : (
+                <div className="p-4 rounded-xl bg-gradient-to-r from-cyan-950/50 via-slate-900 to-blue-950/50 border border-cyan-500/40 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+                      <span className="text-xs font-bold text-white tracking-wide">
+                        BASETEN CREDITS: $100 APPROVED
+                      </span>
+                      <span className="px-2 py-0.5 text-[9px] bg-cyan-500/30 text-cyan-200 rounded border border-cyan-400/40 font-mono">
+                        2M TOKENS / MIN
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-emerald-400 font-bold font-mono">
+                      MODEL: MUSE-SPARK-OPEN-1026
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-300 leading-relaxed">
+                    Baseten high-throughput inference engine powers <strong className="text-cyan-300">Meta Muse Spark Open (1026)</strong> for rapid multi-agent conflict reasoning, predictive urban simulation, and sub-second municipal actuation.
+                  </p>
+                  <div className="flex flex-wrap items-center gap-3 text-[10px] text-slate-400 font-mono pt-1">
+                    <span>GRANTEE: Hailemichael Tesfaye</span>
+                    <span>•</span>
+                    <span>ENDPOINT: inference.baseten.co/v1</span>
+                    <span>•</span>
+                    <span className="text-cyan-300 font-bold">STATUS: SELECTED & VERIFIED</span>
+                    <span>•</span>
+                    <span className="text-emerald-400 font-bold">CREDITS: $100.00 USD</span>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Telemetry Grid */}
               <div className="p-4 rounded-xl bg-slate-950/90 border border-slate-800 space-y-3">
