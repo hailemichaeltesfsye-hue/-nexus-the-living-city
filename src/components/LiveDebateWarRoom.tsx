@@ -283,6 +283,15 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
     tacticalAudio.setVoiceEnabled(true);
     setIsVoiceMuted(false);
     tacticalAudio.setSpeechRate(cadenceSpeed);
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.resume();
+      } catch {
+        // safe catch
+      }
+    }
+    soundEngine.playEvacuationActivated();
     setCurrentStep(1);
     setIsPlayingAuto(true);
     setIsActuated(false);
@@ -460,6 +469,17 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>SHOW FULL TRANSCRIPT</span>
+            </button>
+
+            <button
+              onClick={() => {
+                tacticalAudio.testVoiceOutput();
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-500/50 text-emerald-300 transition-all cursor-pointer shadow"
+              title="Test agent voice audio output"
+            >
+              <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
+              <span>TEST VOICE OUTPUT</span>
             </button>
           </div>
 

@@ -12,6 +12,8 @@ class TacticalAudioEngine {
   private currentAudioElement: HTMLAudioElement | null = null;
   private currentLanguage: 'am' | 'en' | 'bilingual' = 'bilingual';
   private speechRate: number = 1.2;
+  private activeUtterances: Set<SpeechSynthesisUtterance> = new Set();
+  private safetyTimer: any = null;
 
   // Manifest of pre-rendered high-definition Amharic audio assets
   private readonly amharicAudioMap: Record<string, string> = {
@@ -78,6 +80,10 @@ class TacticalAudioEngine {
   }
 
   public stopAllAudio() {
+    if (this.safetyTimer) {
+      clearTimeout(this.safetyTimer);
+      this.safetyTimer = null;
+    }
     if (this.currentAudioElement) {
       try {
         this.currentAudioElement.pause();
@@ -94,6 +100,7 @@ class TacticalAudioEngine {
         // ignore
       }
     }
+    this.activeUtterances.clear();
   }
 
   public setMuted(muted: boolean) {
@@ -216,28 +223,35 @@ class TacticalAudioEngine {
     if (localFile) {
       try {
         const audio = new Audio(localFile);
+        audio.preload = 'auto';
         audio.volume = 1.0;
         audio.playbackRate = this.speechRate; // Fast crisp operational tempo
         this.currentAudioElement = audio;
 
         let finished = false;
+        let timer: any = null;
         const done = () => {
           if (!finished) {
             finished = true;
+            if (timer) clearTimeout(timer);
             this.currentAudioElement = null;
             onEnd?.();
           }
         };
 
+        // Safety fallback timer if audio element hangs
+        timer = setTimeout(done, 12000);
+
         audio.onended = done;
         audio.onerror = () => {
-          // If local audio fails to load, fall back to online TTS
+          if (timer) clearTimeout(timer);
           this.streamAmharicTTS(textOrKey, onEnd, phoneticFallback);
         };
 
         const playPromise = audio.play();
         if (playPromise !== undefined) {
           playPromise.catch(() => {
+            if (timer) clearTimeout(timer);
             this.streamAmharicTTS(textOrKey, onEnd, phoneticFallback);
           });
         }
@@ -250,6 +264,50 @@ class TacticalAudioEngine {
 
     // Dynamic Amharic text
     this.streamAmharicTTS(textOrKey, onEnd, phoneticFallback);
+  }
+
+  // Safe wrapper for SpeechSynthesisUtterance to prevent Chrome GC hang and queue stall
+  private safeSpeakUtterance(utter: SpeechSynthesisUtterance, onEnd?: () => void, maxDurationMs?: number) {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      onEnd?.();
+      return;
+    }
+
+    try {
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+
+      // GC Protection: Retain strong reference in activeUtterances Set
+      this.activeUtterances.add(utter);
+
+      let finished = false;
+      let timer: any = null;
+
+      const finish = () => {
+        if (!finished) {
+          finished = true;
+          if (timer) clearTimeout(timer);
+          this.activeUtterances.delete(utter);
+          onEnd?.();
+        }
+      };
+
+      utter.onend = finish;
+      utter.onerror = finish;
+
+      // Watchdog timeout to prevent speech synthesis queue hangs
+      const textLen = utter.text ? utter.text.length : 40;
+      const timeout = maxDurationMs || Math.max(3000, Math.min(12000, (textLen / 8) * 1000));
+      timer = setTimeout(() => {
+        finish();
+      }, timeout);
+
+      window.speechSynthesis.speak(utter);
+    } catch {
+      this.activeUtterances.delete(utter);
+      onEnd?.();
+    }
   }
 
   private streamAmharicTTS(text: string, onEnd?: () => void, phoneticFallback?: string) {
@@ -276,23 +334,27 @@ class TacticalAudioEngine {
       this.currentAudioElement = audio;
 
       let finished = false;
+      let timer: any = null;
       const done = () => {
         if (!finished) {
           finished = true;
+          if (timer) clearTimeout(timer);
           this.currentAudioElement = null;
           onEnd?.();
         }
       };
 
+      timer = setTimeout(done, 10000);
       audio.onended = done;
       audio.onerror = () => {
-        // Fall back to SpeechSynthesis
+        if (timer) clearTimeout(timer);
         this.speakWithSpeechSynthesisAmharic(clean, phoneticFallback, onEnd);
       };
 
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.catch(() => {
+          if (timer) clearTimeout(timer);
           this.speakWithSpeechSynthesisAmharic(clean, phoneticFallback, onEnd);
         });
       }
@@ -331,10 +393,7 @@ class TacticalAudioEngine {
         utter.lang = 'en-US';
       }
 
-      utter.onend = () => onEnd?.();
-      utter.onerror = () => onEnd?.();
-
-      window.speechSynthesis.speak(utter);
+      this.safeSpeakUtterance(utter, onEnd);
     } catch {
       onEnd?.();
     }
@@ -354,6 +413,7 @@ class TacticalAudioEngine {
     }
 
     this.stopAllAudio();
+    this.initContext();
 
     const cleanEn = this.sanitizeSpeechText(textEn, 'en');
 
@@ -383,18 +443,12 @@ class TacticalAudioEngine {
         ) || voices.find((v) => v.lang.startsWith('en'));
       if (enVoice) utterEn.voice = enVoice;
 
-      utterEn.onend = () => {
-        // Immediate rapid transition (30ms), then play crystal-clear Amharic
+      this.safeSpeakUtterance(utterEn, () => {
+        // Immediate rapid transition (40ms), then play crystal-clear Amharic
         setTimeout(() => {
           this.playAmharicAudio(directiveKey || textAm, onComplete, phoneticAm);
-        }, 30);
-      };
-
-      utterEn.onerror = () => {
-        this.playAmharicAudio(directiveKey || textAm, onComplete, phoneticAm);
-      };
-
-      window.speechSynthesis.speak(utterEn);
+        }, 40);
+      });
     } catch {
       this.playAmharicAudio(directiveKey || textAm, onComplete, phoneticAm);
     }
@@ -485,10 +539,7 @@ class TacticalAudioEngine {
       utter.rate = this.speechRate * rate;
       utter.volume = 1.0;
 
-      utter.onend = () => onEnd?.();
-      utter.onerror = () => onEnd?.();
-
-      window.speechSynthesis.speak(utter);
+      this.safeSpeakUtterance(utter, onEnd);
     } catch {
       onEnd?.();
     }
@@ -529,6 +580,7 @@ class TacticalAudioEngine {
 
     try {
       this.stopAllAudio();
+      this.initContext();
       const cleanText = this.sanitizeSpeechText(phrase, 'en');
       const utter = new SpeechSynthesisUtterance(cleanText);
       utter.rate = this.speechRate * 1.05;
@@ -539,13 +591,28 @@ class TacticalAudioEngine {
       const enVoice = voices.find((v) => v.lang.startsWith('en'));
       if (enVoice) utter.voice = enVoice;
 
-      utter.onend = () => onEnd?.();
-      utter.onerror = () => onEnd?.();
-
-      window.speechSynthesis.speak(utter);
+      this.safeSpeakUtterance(utter, onEnd);
     } catch {
       onEnd?.();
     }
+  }
+
+  // Instant Audible Test: Guarantees user can test their speaker output anytime
+  public testVoiceOutput(onDone?: () => void) {
+    this.stopAllAudio();
+    this.setMuted(false);
+    this.setVoiceEnabled(true);
+    this.initContext();
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.resume();
+    }
+    this.speakBilingualDispatch(
+      'NEXUS voice dispatch operational. All municipal agent audio channels active.',
+      'ትዕዛዝ ተፈጽሟል የከተማው አስተዳደር እና ሁሉም ኤጀንቶች ዝግጁ ናቸው',
+      'Teezaz tefetsemuwal Ye ketemaw astedadar enna hulum agentoch zegju nachew',
+      onDone,
+      'confirm_general'
+    );
   }
 }
 

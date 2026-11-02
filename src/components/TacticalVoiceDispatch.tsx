@@ -176,13 +176,17 @@ export const TacticalVoiceDispatch: React.FC<TacticalVoiceDispatchProps> = ({
     const rec = new SpeechRec();
     rec.continuous = true;
     rec.interimResults = true;
-    rec.lang = selectedLang === 'en-US' ? 'en-US' : 'am-ET';
+    // In Bilingual or English mode, recognize English keywords & transliterated Ethiopian landmarks (Gotera, Kazanchis, Meskel, etc.)
+    // In Amharic mode, recognize native Amharic Fidel speech!
+    rec.lang = selectedLang === 'am-ET' ? 'am-ET' : 'en-US';
 
     rec.onstart = () => {
       setIsListening(true);
       setRecognitionError(null);
-      soundEngine.playP2PSynapse();
+      soundEngine.playEvacuationActivated();
     };
+
+    let debounceTimer: any = null;
 
     rec.onresult = (event: any) => {
       let currentInterim = '';
@@ -198,15 +202,37 @@ export const TacticalVoiceDispatch: React.FC<TacticalVoiceDispatchProps> = ({
 
       setInterimTranscript(currentInterim);
       if (finalSpeech) {
-        setTranscript(finalSpeech);
-        handleProcessSpeech(finalSpeech);
+        const trimmed = finalSpeech.trim();
+        setTranscript(trimmed);
+
+        // Immediate match if keyword is already present
+        const lower = trimmed.toLowerCase();
+        const hasKeyword =
+          lower.includes('kazanchis') || lower.includes('flood') || lower.includes('ካዛንቺስ') || lower.includes('ጎርፍ') ||
+          lower.includes('gotera') || lower.includes('traffic') || lower.includes('ጎተራ') || lower.includes('ትራፊክ') ||
+          lower.includes('tikur') || lower.includes('hospital') || lower.includes('ጥቁር') || lower.includes('አንበሳ') ||
+          lower.includes('gerd') || lower.includes('grid') || lower.includes('power') || lower.includes('ህዳሴ') ||
+          lower.includes('drone') || lower.includes('sam') || lower.includes('ድሮን') || lower.includes('meskel') ||
+          lower.includes('debate') || lower.includes('war room') || lower.includes('agent') || lower.includes('ክርክር');
+
+        if (hasKeyword) {
+          handleProcessSpeech(trimmed);
+        } else if (trimmed.length > 5) {
+          // Debounce 1000ms so the user can finish speaking their full thought before fallback
+          if (debounceTimer) clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(() => {
+            handleProcessSpeech(trimmed);
+          }, 1000);
+        }
       }
     };
 
     rec.onerror = (e: any) => {
-      if (e.error !== 'no-speech') {
-        setRecognitionError(`Audio input alert: ${e.error}. You can also click any tactical dispatch button.`);
+      if (e.error === 'no-speech') {
+        // Normal pause in speaking, do not error
+        return;
       }
+      setRecognitionError(`Mic notice: ${e.error}. You can also type or click any preset below.`);
       setIsListening(false);
     };
 
@@ -307,40 +333,71 @@ export const TacticalVoiceDispatch: React.FC<TacticalVoiceDispatchProps> = ({
 
   // Natural Language Intent Extraction
   const handleProcessSpeech = (spoken: string) => {
-    const text = spoken.toLowerCase();
+    if (!spoken || spoken.trim().length === 0) return;
+    const text = spoken.toLowerCase().trim();
 
     // Check for Kazanchis / Flood
-    if (text.includes('kazanchis') || text.includes('ካዛንቺስ') || text.includes('ጎርፍ') || text.includes('flood') || text.includes('አምቡላንስ') || text.includes('ambulance')) {
+    if (
+      text.includes('kazanchis') || text.includes('ካዛንቺስ') ||
+      text.includes('ጎርፍ') || text.includes('flood') ||
+      text.includes('አምቡላንስ') || text.includes('ambulance') ||
+      text.includes('water') || text.includes('drain') || text.includes('corridor')
+    ) {
       executeTacticalPlan(QUICK_COMMANDS[0]);
       return;
     }
 
     // Check for Gotera / Signals
-    if (text.includes('gotera') || text.includes('ጎተራ') || text.includes('traffic') || text.includes('ትራፊክ') || text.includes('መብራት') || text.includes('green wave')) {
+    if (
+      text.includes('gotera') || text.includes('ጎተራ') ||
+      text.includes('traffic') || text.includes('ትራፊክ') ||
+      text.includes('መብራት') || text.includes('green wave') ||
+      text.includes('signal') || text.includes('sheger') || text.includes('አረንጓዴ')
+    ) {
       executeTacticalPlan(QUICK_COMMANDS[1]);
       return;
     }
 
     // Check for Tikur Anbessa / Hospital
-    if (text.includes('tikur') || text.includes('ጥቁር') || text.includes('ሆስፒታል') || text.includes('hospital') || text.includes('icu') || text.includes('አንበሳ')) {
+    if (
+      text.includes('tikur') || text.includes('ጥቁር') ||
+      text.includes('anbessa') || text.includes('አንበሳ') ||
+      text.includes('ሆስፒታል') || text.includes('hospital') ||
+      text.includes('icu') || text.includes('trauma') || text.includes('አልጋ') || text.includes('ድንገተኛ')
+    ) {
       executeTacticalPlan(QUICK_COMMANDS[2]);
       return;
     }
 
     // Check for GERD / Energy
-    if (text.includes('gerd') || text.includes('ግድብ') || text.includes('ኃይል') || text.includes('power') || text.includes('energy') || text.includes('grid')) {
+    if (
+      text.includes('gerd') || text.includes('ህዳሴ') ||
+      text.includes('ግድብ') || text.includes('ኃይል') ||
+      text.includes('power') || text.includes('energy') ||
+      text.includes('grid') || text.includes('substation') || text.includes('solar')
+    ) {
       executeTacticalPlan(QUICK_COMMANDS[3]);
       return;
     }
 
     // Check for SAM / Drone
-    if (text.includes('sam') || text.includes('drone') || text.includes('ድሮን') || text.includes('segment') || text.includes('ሴግመንት') || text.includes('vision')) {
+    if (
+      text.includes('sam') || text.includes('drone') ||
+      text.includes('ድሮን') || text.includes('segment') ||
+      text.includes('ሴግመንት') || text.includes('vision') ||
+      text.includes('meskel') || text.includes('መስቀል')
+    ) {
       executeTacticalPlan(QUICK_COMMANDS[4]);
       return;
     }
 
     // Check for Debate / War Room
-    if (text.includes('debate') || text.includes('ክርክር') || text.includes('agent') || text.includes('ወኪል') || text.includes('dag') || text.includes('consensus')) {
+    if (
+      text.includes('debate') || text.includes('ክርክር') ||
+      text.includes('agent') || text.includes('ወኪል') ||
+      text.includes('dag') || text.includes('consensus') ||
+      text.includes('war room') || text.includes('supervisor')
+    ) {
       executeTacticalPlan(QUICK_COMMANDS[5]);
       return;
     }
@@ -348,7 +405,7 @@ export const TacticalVoiceDispatch: React.FC<TacticalVoiceDispatchProps> = ({
     // Fallback generalized tactical execution
     const fallbackResponseAm = `ትዕዛዝ ተቀብያለሁ ${spoken} ማዕከላዊ ተቆጣጣሪው ኤጀንቶቹን አሰማርቷል`;
     const fallbackPhonetic = `Teezaz teqebiyalehu Maekelawi teqotatariw agentochun asemartuwal`;
-    const fallbackResponseEn = `Directive received. Central Supervisor orchestrating multi agent consensus across municipal actuators.`;
+    const fallbackResponseEn = `Directive received: "${spoken}". Central Supervisor orchestrating multi agent consensus across municipal actuators.`;
 
     setLastExecutedDirective(`Voice Directive: ${spoken}`);
     setRadioVoiceResponseAm(fallbackResponseAm);
@@ -469,6 +526,19 @@ export const TacticalVoiceDispatch: React.FC<TacticalVoiceDispatchProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Audio Test Button */}
+            <button
+              onClick={() => {
+                soundEngine.playUiClick();
+                tacticalAudio.testVoiceOutput();
+              }}
+              className="px-2.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-[11px] font-bold flex items-center gap-1 transition-all shadow cursor-pointer"
+              title="Test speaker output: plays audible radio greeting"
+            >
+              <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
+              <span>TEST AUDIO</span>
+            </button>
+
             {/* 3-Way Language Toggle (Bilingual, Amharic, English) */}
             <div className="flex bg-slate-800/80 rounded-lg p-0.5 border border-slate-700 text-xs">
               <button
@@ -571,24 +641,75 @@ export const TacticalVoiceDispatch: React.FC<TacticalVoiceDispatchProps> = ({
           </div>
         </div>
 
-        {/* Live Speech Recognition Transcription Area */}
+        {/* Live Speech Recognition & Directive Input Bar */}
         <div className="px-6 py-4 bg-slate-900/60 border-b border-slate-800">
-          <div className="text-[11px] uppercase tracking-wider text-slate-400 mb-1 flex items-center justify-between">
-            <span>LIVE TRANSCRIPTION STREAM</span>
+          <div className="text-[11px] uppercase tracking-wider text-slate-400 mb-1.5 flex items-center justify-between">
+            <span className="flex items-center gap-1.5">
+              <span className={`w-2 h-2 rounded-full ${isListening ? 'bg-rose-400 animate-ping' : 'bg-cyan-400'}`} />
+              <span>LIVE TRANSCRIPTION & DIRECTIVE INPUT</span>
+            </span>
             {transcript && <span className="text-emerald-400 text-[10px] font-bold">✓ INTENT EXTRACTED</span>}
           </div>
-          <div className="min-h-[44px] bg-slate-950/80 border border-slate-800/80 rounded-xl p-3 text-sm flex items-center">
-            {transcript || interimTranscript ? (
-              <span className="text-cyan-200 font-sans">
-                {transcript} <span className="text-cyan-500/60 italic">{interimTranscript}</span>
-              </span>
-            ) : (
-              <span className="text-slate-600 italic">
-                {isListening
-                  ? 'Speaking into microphone... Say e.g. "በካዛንቺስ ጎርፍ አለ ለአምቡላንስ መስመር ክፈት"'
-                  : 'Click the center microphone above to speak, or tap any tactical preset command below...'}
-              </span>
-            )}
+
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <input
+                type="text"
+                value={transcript || interimTranscript}
+                onChange={(e) => {
+                  setTranscript(e.target.value);
+                  setInterimTranscript('');
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && (transcript || interimTranscript)) {
+                    handleProcessSpeech(transcript || interimTranscript);
+                  }
+                }}
+                placeholder={
+                  isListening
+                    ? 'Listening live... speak now (e.g. "Gotera green wave" or "በካዛንቺስ ጎርፍ አለ")'
+                    : 'Click mic above to speak, or type directive and click Dispatch...'
+                }
+                className="w-full bg-slate-950/90 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-cyan-200 placeholder:text-slate-500 focus:outline-none focus:border-cyan-400 transition-all font-sans"
+              />
+            </div>
+            <button
+              onClick={() => {
+                const targetText = transcript || interimTranscript;
+                if (targetText.trim()) {
+                  handleProcessSpeech(targetText.trim());
+                }
+              }}
+              disabled={!transcript && !interimTranscript}
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-xs tracking-wider transition-all shadow-[0_0_15px_rgba(0,242,255,0.2)] cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+            >
+              <Zap className="w-3.5 h-3.5" />
+              <span>DISPATCH</span>
+            </button>
+          </div>
+
+          {/* Quick Voice Prompt Chips */}
+          <div className="flex items-center gap-1.5 mt-2.5 overflow-x-auto pb-1 text-[10px] scrollbar-none">
+            <span className="text-slate-500 whitespace-nowrap">Suggested:</span>
+            {[
+              { label: 'Kazanchis Flood', phrase: 'Kazanchis Flash Flood open ambulance corridor' },
+              { label: 'Gotera Green Wave', phrase: 'Gotera interchange traffic signals force green wave' },
+              { label: 'Tikur Anbessa ICU', phrase: 'Tikur Anbessa Hospital preempt trauma ICU beds' },
+              { label: 'GERD Grid Balance', phrase: 'Mitigate GERD power grid fluctuation' },
+              { label: 'Meta SAM Drone', phrase: 'Deploy Meta SAM drone segmentation' },
+              { label: '11-Agent War Room', phrase: 'Trigger 11-agent war room consensus debate' },
+            ].map((chip) => (
+              <button
+                key={chip.label}
+                onClick={() => {
+                  setTranscript(chip.phrase);
+                  handleProcessSpeech(chip.phrase);
+                }}
+                className="px-2 py-0.5 rounded-md bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-cyan-300 border border-slate-700/70 whitespace-nowrap transition-all cursor-pointer"
+              >
+                {chip.label}
+              </button>
+            ))}
           </div>
 
           {recognitionError && (

@@ -30,22 +30,74 @@ class NexusSoundEngine {
     this.masterGain.connect(this.ctx.destination);
   }
 
-  // ─── Utils — Completely silenced so zero electronic oscillator noises can ever play ────
+  // ─── Utils — Procedural musical chords & sweeps with smooth envelopes ───────────
   private osc(
-    _type: OscillatorType,
-    _freq: number,
-    _gainVal: number,
-    _duration: number,
-    _freqEnd?: number,
-    _delay = 0,
+    type: OscillatorType,
+    freq: number,
+    gainVal: number,
+    duration: number,
+    freqEnd?: number,
+    delay = 0,
   ) {
-    // Pure silence: zero electronic beeps, pings, or chirps
-    return;
+    if (this.isMuted) return;
+    this.boot();
+    if (!this.ctx || !this.masterGain) return;
+
+    try {
+      const now = this.ctx.currentTime + delay;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, now);
+      if (freqEnd !== undefined) {
+        osc.frequency.exponentialRampToValueAtTime(Math.max(20, freqEnd), now + duration);
+      }
+
+      // Smooth attack and decay envelope to prevent clicks or harsh buzzes
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.linearRampToValueAtTime(gainVal, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+
+      osc.start(now);
+      osc.stop(now + duration + 0.05);
+    } catch {
+      // AudioContext safe catch
+    }
   }
 
-  private noise(_gainVal: number, _duration: number, _delay = 0) {
-    // Pure silence: zero noise bursts
-    return;
+  private noise(gainVal: number, duration: number, delay = 0) {
+    if (this.isMuted) return;
+    this.boot();
+    if (!this.ctx || !this.masterGain) return;
+
+    try {
+      const bufferSize = this.ctx.sampleRate * duration;
+      const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = Math.random() * 2 - 1;
+      }
+
+      const noiseNode = this.ctx.createBufferSource();
+      noiseNode.buffer = buffer;
+
+      const gain = this.ctx.createGain();
+      const now = this.ctx.currentTime + delay;
+      gain.gain.setValueAtTime(gainVal, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      noiseNode.connect(gain);
+      gain.connect(this.masterGain);
+
+      noiseNode.start(now);
+      noiseNode.stop(now + duration);
+    } catch {
+      // safe catch
+    }
   }
 
   // ─── Public API ───────────────────────────────────────────────────────────

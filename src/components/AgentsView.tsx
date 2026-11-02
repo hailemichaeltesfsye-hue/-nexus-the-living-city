@@ -25,6 +25,7 @@ import {
   Share2,
   Radio,
   MessageSquare,
+  Volume2,
 } from 'lucide-react';
 import { AgentEngineState, agentEngine } from '../simulation/agentEngine';
 import { cityEngine } from '../simulation/cityEngine';
@@ -345,9 +346,19 @@ export const AgentsView: React.FC<AgentsViewProps> = ({ agentState }) => {
 
     setPackets((prev) => [...prev.slice(-10), ...bursts]);
 
+    // Audible agent activation chord & bilingual dispatch
+    soundEngine.playEvacuationActivated();
+    tacticalAudio.speakBilingualDispatch(
+      'Multi-Agent Synergy engaged. 11 autonomous domain agents synchronizing Addis Ababa municipal consensus.',
+      'የ11ዱ ወኪሎች የጋራ ስምምነት እና ትስስር ተጀምሯል',
+      'Ye asra andu wekiloch yegara simiminet sera jemruwal',
+      undefined,
+      'confirm_general'
+    );
+
     setTimeout(() => {
       setIsSynergyTesting(false);
-      tacticalAudio.playTacticalClick();
+      soundEngine.playCinemaTourEnd();
     }, 4500);
   };
 
@@ -992,8 +1003,21 @@ export const AgentsView: React.FC<AgentsViewProps> = ({ agentState }) => {
                     {selectedAgent.status}
                   </span>
                 </div>
-                <div className="text-xs text-slate-400 font-ethiopic">
-                  {selectedAgent.amharicName} • {selectedAgent.role}
+                <div className="text-xs text-slate-400 font-ethiopic flex items-center gap-2 mt-0.5">
+                  <span>{selectedAgent.amharicName} • {selectedAgent.role}</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      soundEngine.playUiClick();
+                      const phraseEn = `${selectedAgent.name}: ${selectedAgent.currentTask}. Status: ${selectedAgent.status}. Quality score ${selectedAgent.qualityScore} percent.`;
+                      tacticalAudio.speakWithAgentVoice(selectedAgent.role, phraseEn, 'en');
+                    }}
+                    className="px-2 py-0.5 rounded bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 text-[10px] font-mono font-bold flex items-center gap-1 transition-all shadow cursor-pointer"
+                    title="Speak agent briefing out loud"
+                  >
+                    <Volume2 className="w-3 h-3 text-sky-400" />
+                    <span>SPEAK INTEL</span>
+                  </button>
                 </div>
               </div>
             </div>
