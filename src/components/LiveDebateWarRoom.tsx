@@ -245,9 +245,43 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
     [cadenceSpeed, executeMunicipalActuation, isVoiceMuted, lang]
   );
 
+  const playSingleTurnVoice = useCallback((turn: (typeof CINEMATIC_DEBATE_SCRIPT)[0]) => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    tacticalAudio.stopAllAudio();
+    tacticalAudio.setMuted(false);
+    tacticalAudio.setVoiceEnabled(true);
+    setIsVoiceMuted(false);
+    setActiveSpeaker(turn.agentName);
+
+    const onDone = () => {
+      setActiveSpeaker(null);
+    };
+
+    if (lang === 'bilingual') {
+      tacticalAudio.speakBilingualDispatch(
+        turn.textEn,
+        turn.textAm,
+        turn.phoneticAm,
+        onDone,
+        `debate_turn_${turn.id}`
+      );
+    } else if (lang === 'am') {
+      tacticalAudio.playAmharicAudio(
+        `debate_turn_${turn.id}`,
+        onDone,
+        turn.phoneticAm
+      );
+    } else {
+      tacticalAudio.speakWithAgentVoice(turn.role, turn.textEn, 'en', onDone);
+    }
+  }, [lang]);
+
   const handleStartSimulatedDebate = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     tacticalAudio.stopAllAudio();
+    tacticalAudio.setMuted(false);
+    tacticalAudio.setVoiceEnabled(true);
+    setIsVoiceMuted(false);
     tacticalAudio.setSpeechRate(cadenceSpeed);
     setCurrentStep(1);
     setIsPlayingAuto(true);
@@ -261,16 +295,19 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
     setCurrentStep(CINEMATIC_DEBATE_SCRIPT.length);
     setIsPlayingAuto(false);
     setActiveSpeaker(null);
-    soundEngine.playUiClick();
   };
 
-  // Cleanup on unmount or close
+  // Cleanup on unmount or close, and ensure audio is ready on open
   useEffect(() => {
+    if (isOpen) {
+      tacticalAudio.setMuted(false);
+      tacticalAudio.setVoiceEnabled(true);
+    }
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       tacticalAudio.stopAllAudio();
     };
-  }, []);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -514,7 +551,17 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
                     )}
                   </div>
 
-                  <span className="text-[10px] text-slate-500">{turn.timestamp}</span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => playSingleTurnVoice(turn)}
+                      className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] bg-slate-800/90 hover:bg-purple-600 hover:text-white text-purple-300 border border-purple-500/30 transition-all cursor-pointer"
+                      title="Play this agent's voice aloud"
+                    >
+                      <Volume2 className="w-3 h-3" />
+                      <span>Hear Voice (ድምፅ)</span>
+                    </button>
+                    <span className="text-[10px] text-slate-500">{turn.timestamp}</span>
+                  </div>
                 </div>
 
                 {/* Message Content (Bilingual shows both English & Amharic side-by-side or stacked) */}

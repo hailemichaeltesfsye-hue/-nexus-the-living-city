@@ -13,7 +13,7 @@
 class NexusSoundEngine {
   private ctx: AudioContext | null = null;
   private masterGain: GainNode | null = null;
-  private isMuted = true; // Muted by default so no unwanted sound/noise ever plays
+  private isMuted = false;
 
   // ─── AudioContext lazy-init (browser autoplay policy) ─────────────────────
   private boot() {

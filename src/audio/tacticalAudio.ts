@@ -6,8 +6,8 @@
 
 class TacticalAudioEngine {
   private ctx: AudioContext | null = null;
-  private isMuted: boolean = true; // Muted by default so no unwanted sound/noise ever plays
-  private voiceEnabled: boolean = false;
+  private isMuted: boolean = false; // Voice is active and audible
+  private voiceEnabled: boolean = true; // Spoken voice synthesis and pre-rendered agent voices enabled
   private ambientGain: GainNode | null = null;
   private currentAudioElement: HTMLAudioElement | null = null;
   private currentLanguage: 'am' | 'en' | 'bilingual' = 'bilingual';
@@ -114,6 +114,17 @@ class TacticalAudioEngine {
 
   public getIsMuted(): boolean {
     return this.isMuted;
+  }
+
+  public setVoiceEnabled(enabled: boolean) {
+    this.voiceEnabled = enabled;
+    if (!enabled) {
+      this.stopAllAudio();
+    }
+  }
+
+  public getVoiceEnabled(): boolean {
+    return this.voiceEnabled;
   }
 
   public setLanguage(lang: 'am' | 'en' | 'bilingual') {
