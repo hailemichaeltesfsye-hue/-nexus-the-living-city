@@ -196,8 +196,7 @@ class AgentEngine {
     this.state.isProcessing = true;
     const time = cityEngine.getState().metrics.simTime;
 
-    // Step 1: Supervisor detects incident
-    tacticalAudio.playAlertPing();
+    // Step 1: Supervisor detects incident (silent background processing)
     this.setAgentStatus('supervisor', 'ANALYZING', `Incident flagged: ${incident.title}`);
     this.addMessage({
       id: `msg_${++this.messageCounter}`,
@@ -264,10 +263,7 @@ class AgentEngine {
 
     await this.delay(650);
 
-    // Step 3: Supervisor conflict detection + AI arbitration
-    tacticalAudio.playAlertPing();
-
-    // --- LIVE AI: Supervisor arbitrates the conflict ---
+    // Step 3: Supervisor conflict detection + AI arbitration (silent)
     const arbitration = await generateSupervisorArbitration(
       incident,
       agentA.proposal,
@@ -417,10 +413,7 @@ class AgentEngine {
       district: incident.district,
     });
 
-    tacticalAudio.speakTacticalDispatch(arbitration.proposedSolution);
-    tacticalAudio.playEmergencySirenChirp();
-
-    // Update incident in simulation engine
+    // Update incident in simulation engine (silent actuation, zero robotic speech)
     cityEngine.updateIncidentStrategy(
       incident.id,
       arbitration.proposedSolution,

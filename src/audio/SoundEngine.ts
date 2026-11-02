@@ -13,7 +13,7 @@
 class NexusSoundEngine {
   private ctx: AudioContext | null = null;
   private masterGain: GainNode | null = null;
-  private isMuted = false;
+  private isMuted = true; // Muted by default so no unwanted sound/noise ever plays
 
   // ─── AudioContext lazy-init (browser autoplay policy) ─────────────────────
   private boot() {
@@ -30,66 +30,22 @@ class NexusSoundEngine {
     this.masterGain.connect(this.ctx.destination);
   }
 
-  // ─── Utils ────────────────────────────────────────────────────────────────
+  // ─── Utils — Completely silenced so zero electronic oscillator noises can ever play ────
   private osc(
-    type: OscillatorType,
-    freq: number,
-    gainVal: number,
-    duration: number,
-    freqEnd?: number,
-    delay = 0,
+    _type: OscillatorType,
+    _freq: number,
+    _gainVal: number,
+    _duration: number,
+    _freqEnd?: number,
+    _delay = 0,
   ) {
-    if (this.isMuted || !this.ctx || !this.masterGain) return;
-    try {
-      const now = this.ctx.currentTime + delay;
-      const g = this.ctx.createGain();
-      g.gain.setValueAtTime(gainVal, now);
-      g.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-      g.connect(this.masterGain);
-
-      const o = this.ctx.createOscillator();
-      o.type = type;
-      o.frequency.setValueAtTime(freq, now);
-      if (freqEnd !== undefined) {
-        o.frequency.exponentialRampToValueAtTime(Math.max(freqEnd, 1), now + duration);
-      }
-      o.connect(g);
-      o.start(now);
-      o.stop(now + duration + 0.01);
-    } catch {
-      /* no-op */
-    }
+    // Pure silence: zero electronic beeps, pings, or chirps
+    return;
   }
 
-  private noise(gainVal: number, duration: number, delay = 0) {
-    if (this.isMuted || !this.ctx || !this.masterGain) return;
-    try {
-      const now = this.ctx.currentTime + delay;
-      const bufSize = this.ctx.sampleRate * Math.min(duration, 1);
-      const buf = this.ctx.createBuffer(1, bufSize, this.ctx.sampleRate);
-      const data = buf.getChannelData(0);
-      for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
-
-      const src = this.ctx.createBufferSource();
-      src.buffer = buf;
-
-      const g = this.ctx.createGain();
-      g.gain.setValueAtTime(gainVal, now);
-      g.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-
-      // High-pass to make it hissy
-      const hp = this.ctx.createBiquadFilter();
-      hp.type = 'highpass';
-      hp.frequency.value = 4000;
-
-      src.connect(hp);
-      hp.connect(g);
-      g.connect(this.masterGain);
-      src.start(now);
-      src.stop(now + duration + 0.01);
-    } catch {
-      /* no-op */
-    }
+  private noise(_gainVal: number, _duration: number, _delay = 0) {
+    // Pure silence: zero noise bursts
+    return;
   }
 
   // ─── Public API ───────────────────────────────────────────────────────────

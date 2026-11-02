@@ -260,7 +260,6 @@ export const DroneCockpit: React.FC<DroneCockpitProps> = ({
 
   const handleDeployToTwin = () => {
     if (!activeSegment) return;
-    soundEngine.playEvacuationActivated();
     setLastActionStatus(`Segment [${activeSegment.targetName}] deployed directly to 3D Digital Twin!`);
     onDeploySegmentToTwin?.(activeSegment);
     setTimeout(() => setLastActionStatus(null), 3500);

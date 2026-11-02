@@ -282,9 +282,6 @@ export const AgentsView: React.FC<AgentsViewProps> = ({ agentState }) => {
 
   // Trigger synergy test: Fires massive multi-agent P2P synapse burst and consensus synthesis
   const triggerSynergyTest = () => {
-    tacticalAudio.playAlertPing();
-    tacticalAudio.speakTacticalDispatch('Initiating multi-agent peer-to-peer neural synergy mesh synchronization.');
-    soundEngine.playCinemaTourStart(); // dramatic synergy burst
     setIsSynergyTesting(true);
 
     const bursts: ParticlePacket[] = [];

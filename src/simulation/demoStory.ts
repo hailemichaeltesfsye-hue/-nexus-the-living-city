@@ -60,9 +60,7 @@ class DemoStoryOrchestrator {
     this.abortController = false;
 
     try {
-      // 1. Traffic congestion increases
-      tacticalAudio.playAlertPing();
-      tacticalAudio.speakTacticalDispatch('Heavy rain front crossing Entoto ridge during evening rush hour.');
+      // 1. Traffic congestion increases (pure silent visual showcase)
       await this.executeStep({
         step: 1,
         totalSteps: 16,
@@ -291,7 +289,6 @@ class DemoStoryOrchestrator {
       if (this.abortController) return;
 
       // 16. Dashboard shows measured outcome
-      tacticalAudio.speakTacticalDispatch('Showcase mission complete. Autonomous multi-agent coordination verified.');
       await this.executeStep({
         step: 16,
         totalSteps: 16,

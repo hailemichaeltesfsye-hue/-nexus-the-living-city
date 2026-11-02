@@ -6,12 +6,12 @@
 
 class TacticalAudioEngine {
   private ctx: AudioContext | null = null;
-  private isMuted: boolean = false;
-  private voiceEnabled: boolean = true;
+  private isMuted: boolean = true; // Muted by default so no unwanted sound/noise ever plays
+  private voiceEnabled: boolean = false;
   private ambientGain: GainNode | null = null;
   private currentAudioElement: HTMLAudioElement | null = null;
   private currentLanguage: 'am' | 'en' | 'bilingual' = 'bilingual';
-  private speechRate: number = 1.2; // High-speed rapid tactical cadence by default
+  private speechRate: number = 1.2;
 
   // Manifest of pre-rendered high-definition Amharic audio assets
   private readonly amharicAudioMap: Record<string, string> = {
