@@ -129,61 +129,14 @@ class TacticalAudioEngine {
     // Pure silence: eliminates annoying dot/tick pulse
   }
 
-  // Tactical alert / conflict detection ping
+  // Tactical alert / conflict detection ping — silenced to eliminate repetitive annoying chirp/dot noises
   public playAlertPing() {
-    if (this.isMuted) return;
-    this.initContext();
-    if (!this.ctx) return;
-
-    try {
-      const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(440, now);
-      osc.frequency.setValueAtTime(880, now + 0.08);
-
-      gain.gain.setValueAtTime(0.12, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-
-      osc.start();
-      osc.stop(now + 0.25);
-    } catch {
-      // Audio fallback
-    }
+    // Pure silence: eliminates annoying alert ping during simulation and drone runs
   }
 
-  // Emergency Siren chirps
+  // Emergency Siren chirps — silenced to eliminate repetitive electronic siren noise
   public playEmergencySirenChirp() {
-    if (this.isMuted) return;
-    this.initContext();
-    if (!this.ctx) return;
-
-    try {
-      const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(600, now);
-      osc.frequency.linearRampToValueAtTime(950, now + 0.15);
-      osc.frequency.linearRampToValueAtTime(600, now + 0.3);
-
-      gain.gain.setValueAtTime(0.08, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-
-      osc.start();
-      osc.stop(now + 0.3);
-    } catch {
-      // Audio fallback
-    }
+    // Pure silence: eliminates annoying siren chirp during drone and hazard runs
   }
 
   // Ambient cybernetic city room hum — completely disabled to eliminate background noise

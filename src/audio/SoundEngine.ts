@@ -118,20 +118,10 @@ class NexusSoundEngine {
   }
 
   /**
-   * HAZARD ALERT — dual-tone pulsing beep sequence (red crisis)
-   * Triggered when hazard overlay activates over Meskel / Kazanchis.
+   * HAZARD ALERT — Silenced to eliminate repetitive electronic beep/alarm noise
    */
   public playHazardAlert() {
-    this.boot();
-    if (!this.ctx) return;
-    // Three rising stabs — urgent emergency tone
-    this.osc('square', 440, 0.08, 0.12, 660);
-    this.osc('square', 440, 0.05, 0.12, 660, 0.18);
-    this.osc('square', 550, 0.1, 0.22, 880, 0.36);
-    // Sub-bass thump
-    this.osc('sine', 60, 0.15, 0.3, 20);
-    // Hiss noise burst
-    this.noise(0.03, 0.15, 0.36);
+    // Pure silence: eliminates annoying alert stabs and electronic chirps
   }
 
   /**
@@ -198,11 +188,10 @@ class NexusSoundEngine {
   }
 
   /**
-   * UI CLICK — micro-feedback for buttons
+   * UI CLICK — Silenced for pure quiet clicks
    */
   public playUiClick() {
-    this.boot();
-    this.osc('sine', 900, 0.04, 0.04, 1400);
+    // Pure silence: eliminates repetitive dot/tick noise
   }
 }
 
