@@ -1,3 +1,5 @@
+declare const process: { env: Record<string, string | undefined> };
+
 export default async function handler(req: any, res: any) {
   // Universal CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
