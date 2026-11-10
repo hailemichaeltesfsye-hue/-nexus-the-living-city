@@ -16,6 +16,7 @@ import {
   Play,
   Sparkles,
   Command,
+  X,
 } from 'lucide-react';
 import { ViewTab } from '../types/city';
 
@@ -26,6 +27,7 @@ interface NavigationSidebarProps {
   isDemoRunning: boolean;
   onOpenCommandPalette: () => void;
   activeIncidentsCount: number;
+  onCloseMobile?: () => void;
 }
 
 export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
@@ -35,6 +37,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   isDemoRunning,
   onOpenCommandPalette,
   activeIncidentsCount,
+  onCloseMobile,
 }) => {
   const navItems = [
     { id: 'overview' as ViewTab, label: 'Overview', amharic: 'አጠቃላይ እይታ', icon: LayoutDashboard },
@@ -55,29 +58,41 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   ];
 
   return (
-    <aside className="w-64 h-full flex flex-col justify-between hud-panel border-r border-sky-950/60 bg-[#070b14]/90 z-20 select-none">
+    <aside className="w-72 sm:w-64 h-full flex flex-col justify-between hud-panel border-r border-sky-950/60 bg-[#070b14]/95 z-20 select-none shadow-2xl overflow-hidden">
       {/* Top Header */}
-      <div>
-        <div className="p-4 border-b border-sky-900/30">
-          <div className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 via-sky-500 to-emerald-500 p-0.5 flex items-center justify-center shadow-lg shadow-sky-500/20">
-              <div className="w-full h-full bg-[#070b14] rounded-[6px] flex items-center justify-center font-bold text-sky-400 text-sm font-mono">
-                NX
+      <div className="flex-1 flex flex-col min-h-0">
+        <div className="p-3.5 sm:p-4 border-b border-sky-900/30">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 via-sky-500 to-emerald-500 p-0.5 flex items-center justify-center shadow-lg shadow-sky-500/20 shrink-0">
+                <div className="w-full h-full bg-[#070b14] rounded-[6px] flex items-center justify-center font-bold text-sky-400 text-sm font-mono">
+                  NX
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center space-x-1.5">
+                  <span className="font-display font-bold tracking-widest text-sm text-sky-200">
+                    NEXUS
+                  </span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-sky-500/20 text-sky-400 font-mono border border-sky-500/30">
+                    V3.8
+                  </span>
+                </div>
+                <p className="text-[10px] text-slate-400 font-ethiopic tracking-wide">
+                  ኔክሰስ አዲስ አበባ • Autonomous Twin
+                </p>
               </div>
             </div>
-            <div>
-              <div className="flex items-center space-x-1.5">
-                <span className="font-display font-bold tracking-widest text-sm text-sky-200">
-                  NEXUS
-                </span>
-                <span className="text-[10px] px-1.5 py-0.2 rounded bg-sky-500/20 text-sky-400 font-mono border border-sky-500/30">
-                  V3.8
-                </span>
-              </div>
-              <p className="text-[10px] text-slate-400 font-ethiopic tracking-wide">
-                ኔክሰስ አዲስ አበባ • Autonomous Twin
-              </p>
-            </div>
+
+            {onCloseMobile && (
+              <button
+                onClick={onCloseMobile}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors lg:hidden cursor-pointer"
+                title="Close Navigation Menu"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
           </div>
 
           <div className="mt-3.5 px-2.5 py-1.5 rounded bg-sky-950/40 border border-sky-800/30 flex items-center justify-between text-[11px]">
@@ -91,8 +106,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
           </div>
         </div>
 
-        {/* Navigation Items */}
-        <nav className="p-2 space-y-1">
+        {/* Navigation Items - Scrollable */}
+        <nav className="p-2 space-y-1 overflow-y-auto flex-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentTab === item.id;

@@ -5,6 +5,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
+import { Menu, Search, Sparkles } from 'lucide-react';
 import { ThreeCityCanvas, ThreeCityCanvasHandle } from './components/ThreeCityCanvas';
 import { RealAddisMap } from './components/RealAddisMap';
 import { VisualShadingMode } from './three/CityScene';
@@ -46,6 +47,8 @@ export default function App() {
   const [demoStepInfo, setDemoStepInfo] = useState<DemoStepInfo | null>(null);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(true);
   const [canvasEngine, setCanvasEngine] = useState<'real_mapbox' | 'procedural_three'>('real_mapbox');
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState<boolean>(false);
+  const [isSupervisorDrawerOpen, setIsSupervisorDrawerOpen] = useState<boolean>(false);
 
   const canvasRef = useRef<ThreeCityCanvasHandle>(null);
 
@@ -173,10 +176,78 @@ export default function App() {
         />
       )}
 
+      {/* Mobile / Tablet Top Navigation Bar */}
+      <div className="lg:hidden absolute top-0 left-0 right-0 z-30 pointer-events-auto flex items-center justify-between px-2.5 py-2 bg-slate-950/90 backdrop-blur-md border-b border-cyan-500/30">
+        {/* Left: Hamburger menu toggle with incident badge */}
+        <button
+          onClick={() => setIsMobileNavOpen(true)}
+          className="p-1.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-cyan-400 text-slate-200 hover:text-white flex items-center justify-center relative cursor-pointer"
+          aria-label="Open Navigation Menu"
+        >
+          <Menu className="w-5 h-5 text-cyan-400" />
+          {simState.metrics.activeIncidentsCount > 0 && (
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse border border-slate-950" />
+          )}
+        </button>
+
+        {/* Center: Brand & Compact Engine Selector */}
+        <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1 mr-1">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(0,242,255,0.8)]" />
+            <span className="font-display font-black text-xs tracking-wider text-white">NEXUS</span>
+          </div>
+          <div className="flex items-center bg-slate-900/90 border border-slate-800 rounded-full p-0.5 text-[10px] font-mono">
+            <button
+              onClick={() => setCanvasEngine('real_mapbox')}
+              className={`px-2 py-0.5 rounded-full font-bold transition-all ${
+                canvasEngine === 'real_mapbox'
+                  ? 'bg-cyan-500 text-slate-950 shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              3D MAP
+            </button>
+            <button
+              onClick={() => setCanvasEngine('procedural_three')}
+              className={`px-2 py-0.5 rounded-full font-bold transition-all ${
+                canvasEngine === 'procedural_three'
+                  ? 'bg-cyan-500 text-slate-950 shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              TWIN
+            </button>
+          </div>
+        </div>
+
+        {/* Right: Search & AI Intel Drawer Toggles */}
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setIsCommandPaletteOpen(true)}
+            className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-cyan-500/50 text-slate-300 hover:text-white cursor-pointer"
+            title="Tactical Command Palette (Ctrl+K)"
+          >
+            <Search className="w-4 h-4 text-slate-400" />
+          </button>
+          <button
+            onClick={() => setIsSupervisorDrawerOpen(true)}
+            className={`px-2 py-1 rounded-lg border text-[10px] font-mono font-bold flex items-center gap-1 cursor-pointer transition-all ${
+              isSupervisorDrawerOpen
+                ? 'bg-cyan-500 text-slate-950 border-cyan-400'
+                : 'bg-cyan-950/60 hover:bg-cyan-900/70 text-cyan-300 border-cyan-500/40'
+            }`}
+            title="Toggle Supervisor AI Intelligence Panel"
+          >
+            <Sparkles className="w-3 h-3 text-cyan-400" />
+            <span>AI INTEL</span>
+          </button>
+        </div>
+      </div>
+
       {/* Main HUD Overlay Frame */}
       <div className="relative z-10 w-full h-full flex pointer-events-none">
-        {/* Top Center: 3D Twin Engine Selector */}
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 pointer-events-auto flex items-center bg-slate-950/90 border border-cyan-500/40 rounded-full p-1 shadow-[0_0_20px_rgba(0,0,0,0.85)] backdrop-blur-xl">
+        {/* Top Center: 3D Twin Engine Selector (Desktop) */}
+        <div className="hidden lg:flex absolute top-4 left-1/2 -translate-x-1/2 z-30 pointer-events-auto items-center bg-slate-950/90 border border-cyan-500/40 rounded-full p-1 shadow-[0_0_20px_rgba(0,0,0,0.85)] backdrop-blur-xl">
           <button
             onClick={() => setCanvasEngine('real_mapbox')}
             className={`px-3 py-1 rounded-full text-xs font-mono font-bold flex items-center gap-1.5 transition-all ${
@@ -202,8 +273,9 @@ export default function App() {
             <span>PROCEDURAL TWIN</span>
           </button>
         </div>
-        {/* Left Navigation Rail (Pointer-events enabled on children) */}
-        <div className="pointer-events-auto h-full">
+
+        {/* Left Navigation Rail (Desktop) */}
+        <div className="pointer-events-auto h-full hidden lg:flex">
           <NavigationSidebar
             currentTab={currentTab}
             onTabChange={(tab) => {
@@ -218,7 +290,7 @@ export default function App() {
         </div>
 
         {/* Center Canvas / Sub-Views */}
-        <div className="flex-1 h-full relative overflow-hidden pointer-events-auto">
+        <div className="flex-1 h-full relative overflow-hidden pointer-events-auto pt-12 lg:pt-0">
           {/* If user switches to dedicated views, render glassmorphic view panel */}
           {currentTab === 'scenarios' && <FutureSimulatorView />}
           {currentTab === 'analytics' && <AnalyticsView simState={simState} />}
@@ -259,9 +331,9 @@ export default function App() {
           {currentTab === 'memory' && <CityMemoryView memory={simState.memory} />}
         </div>
 
-        {/* Right Intelligence Panel (Visible on overview and twin3d) */}
+        {/* Right Intelligence Panel (Desktop - Visible on overview and twin3d) */}
         {(currentTab === 'overview' || currentTab === 'twin3d') && (
-          <div className="pointer-events-auto h-full">
+          <div className="pointer-events-auto h-full hidden xl:flex">
             <SupervisorIntelligencePanel
               agentState={agentState}
               onFocusAgent={(id) => {
@@ -274,6 +346,60 @@ export default function App() {
           </div>
         )}
       </div>
+
+      {/* Mobile Navigation Drawer */}
+      {isMobileNavOpen && (
+        <div className="fixed inset-0 z-50 flex lg:hidden">
+          <div
+            className="fixed inset-0 bg-black/75 backdrop-blur-sm transition-opacity"
+            onClick={() => setIsMobileNavOpen(false)}
+          />
+          <div className="relative z-10 w-72 sm:w-80 max-w-[85vw] h-full shadow-2xl bg-slate-950 flex flex-col">
+            <NavigationSidebar
+              currentTab={currentTab}
+              onTabChange={(tab) => {
+                setCurrentTab(tab);
+                setIsMobileNavOpen(false);
+                if (tab === 'twin3d') canvasRef.current?.resetOverviewCamera();
+              }}
+              onRunDemo={() => {
+                setIsMobileNavOpen(false);
+                handleRunDemo();
+              }}
+              isDemoRunning={isDemoRunning}
+              onOpenCommandPalette={() => {
+                setIsMobileNavOpen(false);
+                setIsCommandPaletteOpen(true);
+              }}
+              activeIncidentsCount={simState.metrics.activeIncidentsCount}
+              onCloseMobile={() => setIsMobileNavOpen(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Supervisor Intelligence Drawer */}
+      {isSupervisorDrawerOpen && (
+        <div className="fixed inset-0 z-50 flex justify-end xl:hidden">
+          <div
+            className="fixed inset-0 bg-black/75 backdrop-blur-sm transition-opacity"
+            onClick={() => setIsSupervisorDrawerOpen(false)}
+          />
+          <div className="relative z-10 w-full sm:w-96 max-w-[92vw] h-full shadow-2xl bg-slate-950 flex flex-col">
+            <SupervisorIntelligencePanel
+              agentState={agentState}
+              onFocusAgent={(id) => {
+                const ag = agentState.agents[id];
+                if (ag.targetDistrict && ag.targetDistrict !== 'all') {
+                  canvasRef.current?.focusOnDistrict(ag.targetDistrict);
+                }
+                setIsSupervisorDrawerOpen(false);
+              }}
+              onCloseMobile={() => setIsSupervisorDrawerOpen(false)}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Building Telemetry Inspector Modal */}
       {selectedBuilding && (

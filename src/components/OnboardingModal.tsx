@@ -29,32 +29,32 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md select-none animate-in fade-in duration-200">
-      <div className="w-full max-w-2xl rounded-2xl hud-panel border border-sky-500/40 bg-[#070c18] shadow-2xl p-6 space-y-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/85 backdrop-blur-md select-none animate-in fade-in duration-200">
+      <div className="w-full max-w-2xl rounded-2xl hud-panel border border-sky-500/40 bg-[#070c18] shadow-2xl p-4 sm:p-6 space-y-4 sm:space-y-6 max-h-[92vh] overflow-y-auto">
         {/* Top Header */}
-        <div className="flex items-center space-x-3.5 border-b border-sky-950 pb-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 via-sky-500 to-emerald-500 p-0.5 flex items-center justify-center shadow-lg shadow-sky-500/20">
-            <div className="w-full h-full bg-[#070c18] rounded-[10px] flex items-center justify-center font-bold text-sky-400 text-lg font-mono">
+        <div className="flex items-center space-x-3 sm:space-x-3.5 border-b border-sky-950 pb-3 sm:pb-4">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-amber-500 via-sky-500 to-emerald-500 p-0.5 flex items-center justify-center shadow-lg shadow-sky-500/20 shrink-0">
+            <div className="w-full h-full bg-[#070c18] rounded-[10px] flex items-center justify-center font-bold text-sky-400 text-base sm:text-lg font-mono">
               NX
             </div>
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h2 className="text-xl font-display font-bold text-sky-100 tracking-wide">
+              <h2 className="text-base sm:text-xl font-display font-bold text-sky-100 tracking-wide">
                 NEXUS: THE LIVING CITY
               </h2>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 font-mono border border-sky-500/40">
+              <span className="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 font-mono border border-sky-500/40 shrink-0">
                 AI DIGITAL TWIN
               </span>
             </div>
-            <p className="text-xs text-slate-400 font-mono mt-0.5">
+            <p className="text-[11px] sm:text-xs text-slate-400 font-mono mt-0.5">
               Autonomous Multi-Agent AI Grid for Real-Time Urban Telemetry & Governance
             </p>
           </div>
         </div>
 
         {/* Feature Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 text-xs font-mono">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs font-mono">
           <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2">
             <div className="w-8 h-8 rounded-lg bg-sky-950 border border-sky-800 flex items-center justify-center text-sky-400">
               <Box className="w-4 h-4" />
@@ -100,10 +100,10 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-end space-x-3 pt-2 border-t border-sky-950">
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:space-x-3 pt-2 border-t border-sky-950">
           <button
             onClick={onClose}
-            className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300 cursor-pointer"
+            className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300 cursor-pointer text-center"
           >
             ENTER COMMAND CENTER
           </button>
@@ -113,9 +113,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               onClose();
               onStartDemo();
             }}
-            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 text-slate-950 font-display font-bold text-xs flex items-center space-x-2 shadow-lg shadow-sky-500/20 cursor-pointer"
+            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 text-slate-950 font-display font-bold text-xs flex items-center justify-center space-x-2 shadow-lg shadow-sky-500/20 cursor-pointer text-center"
           >
-            <Sparkles className="w-4 h-4 fill-current" />
+            <Sparkles className="w-4 h-4 fill-current shrink-0" />
             <span>RUN CINEMATIC DEMO NOW</span>
           </button>
         </div>

@@ -476,9 +476,9 @@ export const AgentsView: React.FC<AgentsViewProps> = ({ agentState }) => {
   };
 
   return (
-    <div className="flex-1 h-full overflow-y-auto p-6 bg-[#05080f]/95 text-slate-200 select-none space-y-6">
+    <div className="flex-1 h-full overflow-y-auto p-3 sm:p-4 md:p-6 pb-28 sm:pb-32 bg-[#05080f]/95 text-slate-200 select-none space-y-4 sm:space-y-6">
       {/* Top Header */}
-      <div className="p-4 rounded-xl hud-panel border border-sky-500/30 bg-[#070c18]/90 flex flex-wrap items-center justify-between gap-4">
+      <div className="p-3 sm:p-4 rounded-xl hud-panel border border-sky-500/30 bg-[#070c18]/90 flex flex-wrap items-center justify-between gap-3 sm:gap-4">
         <div>
           <div className="flex items-center space-x-2 text-sky-400 font-display text-lg font-bold">
             <Cpu className="w-5 h-5 text-sky-400" />
@@ -551,7 +551,7 @@ export const AgentsView: React.FC<AgentsViewProps> = ({ agentState }) => {
 
       {/* PRODUCTION FEATURE: FULL DYNAMIC PEER-TO-PEER (P2P) MESH CONSTELLATION */}
       {viewLayout === 'constellation' && (
-        <div className="relative w-full h-[540px] rounded-2xl hud-panel border border-sky-500/40 bg-[#070c1a]/95 overflow-hidden shadow-2xl flex items-center justify-center">
+        <div className="relative w-full h-[380px] sm:h-[480px] md:h-[540px] rounded-2xl hud-panel border border-sky-500/40 bg-[#070c1a]/95 overflow-hidden shadow-2xl flex items-center justify-center">
           {/* Background Synapse Circuit Grid & Rings */}
           <div className="absolute inset-0 bg-grid-cyber opacity-30 pointer-events-none" />
 
@@ -1023,7 +1023,7 @@ export const AgentsView: React.FC<AgentsViewProps> = ({ agentState }) => {
             </div>
 
             {/* Quick Metrics */}
-            <div className="flex items-center space-x-3 font-mono text-xs">
+            <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
               <div className="p-2 rounded bg-slate-900/80 border border-slate-800 text-center min-w-[70px]">
                 <span className="text-[9px] text-slate-400 block">CONFIDENCE</span>
                 <span className="text-emerald-400 font-bold text-sm">

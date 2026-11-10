@@ -35,9 +35,9 @@ export const CityMemoryView: React.FC<CityMemoryViewProps> = ({ memory }) => {
   });
 
   return (
-    <div className="flex-1 h-full overflow-y-auto p-6 bg-[#05080f]/95 text-slate-200 select-none space-y-6">
+    <div className="flex-1 h-full overflow-y-auto p-3 sm:p-4 md:p-6 pb-28 sm:pb-32 bg-[#05080f]/95 text-slate-200 select-none space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="p-4 rounded-xl hud-panel border border-sky-500/30 bg-[#070c18]/90 flex items-center justify-between">
+      <div className="p-3 sm:p-4 rounded-xl hud-panel border border-sky-500/30 bg-[#070c18]/90 flex flex-wrap items-center justify-between gap-3">
         <div>
           <div className="flex items-center space-x-2 text-sky-400 font-display text-lg font-bold">
             <Archive className="w-5 h-5 text-sky-400" />
@@ -54,7 +54,7 @@ export const CityMemoryView: React.FC<CityMemoryViewProps> = ({ memory }) => {
 
       {/* Filter and Search Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="relative flex-1 min-w-[240px]">
+        <div className="relative flex-1 min-w-[200px]">
           <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
           <input
             type="text"
@@ -65,7 +65,7 @@ export const CityMemoryView: React.FC<CityMemoryViewProps> = ({ memory }) => {
           />
         </div>
 
-        <div className="flex items-center space-x-1.5 font-mono text-xs">
+        <div className="flex flex-wrap items-center gap-1.5 font-mono text-xs">
           <Filter className="w-3.5 h-3.5 text-slate-400" />
           <span className="text-slate-500 text-[11px]">TYPE:</span>
           {['ALL', 'heavy_rain', 'traffic_accident', 'power_outage', 'water_shortage'].map((t) => (

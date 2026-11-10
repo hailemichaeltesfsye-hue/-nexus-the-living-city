@@ -17,6 +17,7 @@ import {
   Radio,
   CloudSun,
   Satellite,
+  X,
 } from 'lucide-react';
 import { AgentEngineState } from '../simulation/agentEngine';
 import { AgentId } from '../types/city';
@@ -26,11 +27,13 @@ import { AuditLog } from './AuditLog';
 interface SupervisorIntelligencePanelProps {
   agentState: AgentEngineState;
   onFocusAgent?: (agentId: AgentId) => void;
+  onCloseMobile?: () => void;
 }
 
 export const SupervisorIntelligencePanel: React.FC<SupervisorIntelligencePanelProps> = ({
   agentState,
   onFocusAgent,
+  onCloseMobile,
 }) => {
   const [filterType, setFilterType] = useState<string>('ALL');
   const [viewMode, setViewMode] = useState<'feed' | 'dag'>('feed');
@@ -58,12 +61,12 @@ export const SupervisorIntelligencePanel: React.FC<SupervisorIntelligencePanelPr
   });
 
   return (
-    <div className="w-84 h-full flex flex-col justify-between hud-panel border-l border-sky-950/60 bg-[#070b14]/92 z-20 select-none overflow-hidden">
+    <div className="w-full sm:w-96 xl:w-84 h-full flex flex-col justify-between hud-panel border-l border-sky-950/60 bg-[#070b14]/95 z-20 select-none overflow-hidden shadow-2xl">
       {/* Panel Top Header */}
       <div className="p-3.5 border-b border-sky-900/30">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <div className="w-7 h-7 rounded-md bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400">
+            <div className="w-7 h-7 rounded-md bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 shrink-0">
               <BrainCircuit className="w-4 h-4" />
             </div>
             <div>
@@ -76,23 +79,35 @@ export const SupervisorIntelligencePanel: React.FC<SupervisorIntelligencePanelPr
             </div>
           </div>
 
-          <div className="flex items-center space-x-1 bg-slate-900/80 p-0.5 rounded border border-slate-800 font-mono text-[9px]">
-            <button
-              onClick={() => setViewMode('feed')}
-              className={`px-1.5 py-0.5 rounded cursor-pointer ${
-                viewMode === 'feed' ? 'bg-sky-500 text-slate-950 font-bold' : 'text-slate-400'
-              }`}
-            >
-              FEED
-            </button>
-            <button
-              onClick={() => setViewMode('dag')}
-              className={`px-1.5 py-0.5 rounded cursor-pointer ${
-                viewMode === 'dag' ? 'bg-sky-500 text-slate-950 font-bold' : 'text-slate-400'
-              }`}
-            >
-              DAG TREE
-            </button>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center space-x-1 bg-slate-900/80 p-0.5 rounded border border-slate-800 font-mono text-[9px]">
+              <button
+                onClick={() => setViewMode('feed')}
+                className={`px-1.5 py-0.5 rounded cursor-pointer ${
+                  viewMode === 'feed' ? 'bg-sky-500 text-slate-950 font-bold' : 'text-slate-400'
+                }`}
+              >
+                FEED
+              </button>
+              <button
+                onClick={() => setViewMode('dag')}
+                className={`px-1.5 py-0.5 rounded cursor-pointer ${
+                  viewMode === 'dag' ? 'bg-sky-500 text-slate-950 font-bold' : 'text-slate-400'
+                }`}
+              >
+                DAG
+              </button>
+            </div>
+
+            {onCloseMobile && (
+              <button
+                onClick={onCloseMobile}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 xl:hidden cursor-pointer"
+                title="Close Supervisor Panel"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </div>
 

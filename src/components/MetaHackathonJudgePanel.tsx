@@ -128,28 +128,28 @@ export const MetaHackathonJudgePanel: React.FC<MetaHackathonJudgePanelProps> = (
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-4xl max-h-[90vh] bg-gradient-to-b from-slate-900/98 via-slate-900/95 to-slate-950/98 border border-cyan-500/50 rounded-2xl shadow-[0_0_60px_rgba(0,242,255,0.3)] flex flex-col font-mono text-slate-200 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/85 backdrop-blur-md animate-fadeIn">
+      <div className="relative w-full max-w-4xl max-h-[92vh] bg-gradient-to-b from-slate-900/98 via-slate-900/95 to-slate-950/98 border border-cyan-500/50 rounded-2xl shadow-[0_0_60px_rgba(0,242,255,0.3)] flex flex-col font-mono text-slate-200 overflow-hidden">
         {/* Top Gradient Accent */}
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-600 via-cyan-400 via-purple-500 to-emerald-400" />
 
         {/* Header Bar */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/40">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-600/20 to-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shadow-[0_0_20px_rgba(0,242,255,0.4)]">
-              <Award className="w-6 h-6 animate-pulse" />
+        <div className="flex flex-wrap items-center justify-between px-3 sm:px-6 py-3 sm:py-4 border-b border-slate-800 bg-slate-950/40 gap-2 shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-blue-600/20 to-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 shadow-[0_0_20px_rgba(0,242,255,0.4)] shrink-0">
+              <Award className="w-5 h-5 sm:w-6 sm:h-6 animate-pulse" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-white tracking-wider">
-                  META GLOBAL AI DEVELOPER HACKATHON
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <span className="text-xs sm:text-sm font-bold text-white tracking-wider">
+                  META GLOBAL HACKATHON
                 </span>
-                <span className="px-2 py-0.5 text-[10px] font-bold bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-md shadow">
-                  $150K GRAND CHALLENGE
+                <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold bg-gradient-to-r from-blue-600 to-cyan-500 text-white rounded-md shadow">
+                  $150K CHALLENGE
                 </span>
               </div>
-              <div className="text-xs text-slate-400">
-                Official Evaluator Intelligence Deck • NEXUS: Autonomous Digital Twin for Global South Megacities
+              <div className="text-[10px] sm:text-xs text-slate-400">
+                Evaluator Intelligence Deck • NEXUS: Autonomous Digital Twin
               </div>
             </div>
           </div>
@@ -159,14 +159,14 @@ export const MetaHackathonJudgePanel: React.FC<MetaHackathonJudgePanelProps> = (
               soundEngine.playUiClick();
               onClose();
             }}
-            className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all cursor-pointer"
+            className="p-1.5 sm:p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex items-center gap-2 px-6 py-2.5 bg-slate-950/60 border-b border-slate-800 text-xs">
+        {/* Tab Navigation (Horizontal Scrollable on Mobile) */}
+        <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-6 py-2 bg-slate-950/60 border-b border-slate-800 text-xs overflow-x-auto scrollbar-none shrink-0">
           <button
             onClick={() => {
               soundEngine.playUiClick();

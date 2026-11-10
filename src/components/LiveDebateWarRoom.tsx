@@ -323,31 +323,31 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
   const visibleTurns = CINEMATIC_DEBATE_SCRIPT.slice(0, currentStep);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-3xl bg-gradient-to-b from-slate-900/95 via-slate-900/90 to-slate-950/98 border border-purple-500/40 rounded-2xl shadow-[0_0_50px_rgba(168,85,247,0.25)] overflow-hidden font-mono text-slate-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/85 backdrop-blur-md animate-fadeIn">
+      <div className="relative w-full max-w-3xl bg-gradient-to-b from-slate-900/95 via-slate-900/90 to-slate-950/98 border border-purple-500/40 rounded-2xl shadow-[0_0_50px_rgba(168,85,247,0.25)] overflow-hidden font-mono text-slate-200 max-h-[92vh] flex flex-col">
         {/* Glow Header Frame */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-cyan-500 to-emerald-500" />
 
         {/* Top Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.3)]">
-              <MessageSquare className="w-5 h-5 animate-pulse" />
+        <div className="flex flex-wrap items-center justify-between px-3 sm:px-6 py-3 sm:py-4 border-b border-slate-800 gap-2 shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.3)] shrink-0">
+              <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 animate-pulse" />
             </div>
             <div>
-              <div className="text-sm font-bold text-white tracking-wider flex items-center gap-2">
-                <span>11-AGENT COGNITIVE WAR ROOM</span>
-                <span className="px-1.5 py-0.5 text-[9px] bg-purple-500/20 text-purple-300 border border-purple-500/40 rounded">
-                  P2P SPOKEN ARBITRATION
+              <div className="text-xs sm:text-sm font-bold text-white tracking-wider flex items-center gap-1.5 sm:gap-2">
+                <span>11-AGENT WAR ROOM</span>
+                <span className="px-1.5 py-0.5 text-[8.5px] sm:text-[9px] bg-purple-500/20 text-purple-300 border border-purple-500/40 rounded">
+                  P2P SPOKEN
                 </span>
               </div>
-              <div className="text-xs text-slate-400">
-                Spoken Inter-Agent Dialogue • Real End-to-End Infrastructure Actuators
+              <div className="text-[10px] sm:text-xs text-slate-400">
+                Spoken Dialogue • Infrastructure Actuators
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             {/* Audio Voice Mute/Unmute */}
             <button
               onClick={() => {
@@ -357,7 +357,7 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
                 }
                 soundEngine.playUiClick();
               }}
-              className={`p-2 rounded-lg border text-xs transition-all ${
+              className={`p-1.5 sm:p-2 rounded-lg border text-xs transition-all cursor-pointer ${
                 isVoiceMuted
                   ? 'bg-rose-950/60 border-rose-700 text-rose-300'
                   : 'bg-slate-800 border-slate-700 text-cyan-300 hover:text-white'
@@ -448,50 +448,50 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
         </div>
 
         {/* Action Bar (Trigger Live Spoken P2P Multi-Agent Arbitration) */}
-        <div className="px-6 py-2.5 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between text-xs flex-wrap gap-2">
-          <div className="flex items-center gap-2">
+        <div className="px-3 sm:px-6 py-2 sm:py-2.5 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between text-xs flex-wrap gap-2 shrink-0">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             <button
               onClick={handleStartSimulatedDebate}
               disabled={isPlayingAuto}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
                 isPlayingAuto
                   ? 'bg-purple-500/20 border-purple-500/40 text-purple-300 animate-pulse'
                   : 'bg-purple-600 hover:bg-purple-500 text-white shadow-[0_0_15px_rgba(168,85,247,0.4)]'
               }`}
             >
               <Play className="w-3.5 h-3.5" />
-              <span>{isPlayingAuto ? 'AGENTS COMMUNICATING (P2P)...' : 'TRIGGER SPOKEN P2P ARBITRATION'}</span>
+              <span>{isPlayingAuto ? 'AGENTS COMMUNICATING...' : 'TRIGGER SPOKEN P2P ARBITRATION'}</span>
             </button>
 
             <button
               onClick={handleStopOrReset}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all cursor-pointer"
+              className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10.5px] sm:text-xs transition-all cursor-pointer"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>SHOW FULL TRANSCRIPT</span>
+              <RotateCcw className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <span>TRANSCRIPT</span>
             </button>
 
             <button
               onClick={() => {
                 tacticalAudio.testVoiceOutput();
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-500/50 text-emerald-300 transition-all cursor-pointer shadow"
+              className="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/60 border border-emerald-500/50 text-emerald-300 text-[10.5px] sm:text-xs transition-all cursor-pointer shadow"
               title="Test agent voice audio output"
             >
-              <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>TEST VOICE OUTPUT</span>
+              <Volume2 className="w-3 h-3 text-emerald-400" />
+              <span>TEST VOICE</span>
             </button>
           </div>
 
           {/* Active Speaking Indicator */}
           {activeSpeaker && (
-            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/50 text-cyan-300 text-[11px] animate-pulse">
-              <Radio className="w-3.5 h-3.5 text-cyan-400" />
-              <span>🎙️ SPEAKING: {activeSpeaker.toUpperCase()}</span>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/50 text-cyan-300 text-[10px] sm:text-[11px] animate-pulse">
+              <Radio className="w-3 h-3 text-cyan-400" />
+              <span>🎙️ {activeSpeaker.toUpperCase()}</span>
             </div>
           )}
 
-          <div className="text-[11px] text-slate-400 font-mono">
+          <div className="text-[10px] sm:text-[11px] text-slate-400 font-mono">
             STEP {Math.min(currentStep, CINEMATIC_DEBATE_SCRIPT.length)} OF {CINEMATIC_DEBATE_SCRIPT.length} // CONSENSUS:{' '}
             {currentStep >= 7 ? '94/100 (APPROVED)' : 'IN PROGRESS'}
           </div>
@@ -500,7 +500,7 @@ export const LiveDebateWarRoom: React.FC<LiveDebateWarRoomProps> = ({
         {/* Live Conversation Transcript Feed */}
         <div
           ref={scrollRef}
-          className="p-6 space-y-3.5 max-h-[400px] overflow-y-auto bg-slate-950/50 text-xs"
+          className="p-3 sm:p-6 space-y-3 sm:space-y-3.5 flex-1 min-h-[160px] max-h-[50vh] sm:max-h-[380px] overflow-y-auto bg-slate-950/50 text-xs"
         >
           {visibleTurns.map((turn) => {
             const isVeto = turn.type === 'constitutional_veto';

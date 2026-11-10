@@ -242,10 +242,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 bg-slate-950/80 backdrop-blur-sm select-none p-4">
-      <div className="w-full max-w-xl rounded-2xl hud-panel border border-sky-500/40 bg-[#070c18] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-8 sm:pt-20 bg-slate-950/85 backdrop-blur-sm select-none p-2 sm:p-4">
+      <div className="w-full max-w-xl rounded-2xl hud-panel border border-sky-500/40 bg-[#070c18] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 max-h-[85vh] flex flex-col">
         {/* Input Bar */}
-        <div className="p-3 border-b border-sky-950/80 flex items-center space-x-2">
+        <div className="p-3 border-b border-sky-950/80 flex items-center space-x-2 shrink-0">
           <Search className="w-4 h-4 text-sky-400 shrink-0" />
           <input
             autoFocus
@@ -253,7 +253,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Type a city command, facility name, district, or crisis..."
-            className="w-full bg-transparent text-sm font-mono text-sky-100 placeholder:text-slate-500 focus:outline-none"
+            className="w-full bg-transparent text-xs sm:text-sm font-mono text-sky-100 placeholder:text-slate-500 focus:outline-none"
           />
           <button
             onClick={onClose}
@@ -264,7 +264,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         </div>
 
         {/* Results List */}
-        <div className="max-h-80 overflow-y-auto p-2 space-y-1">
+        <div className="flex-1 max-h-[55vh] sm:max-h-80 overflow-y-auto p-2 space-y-1">
           {filtered.length === 0 ? (
             <div className="p-6 text-center text-xs text-slate-500 font-mono">
               No tactical command matches found.

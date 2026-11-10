@@ -71,7 +71,7 @@ export const TimelineControlBar: React.FC<TimelineControlBarProps> = ({
   };
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-30 w-full max-w-5xl px-4 select-none pointer-events-auto transition-transform duration-300">
+    <div className="fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 z-30 w-[calc(100vw-1rem)] sm:w-full max-w-5xl px-1 sm:px-4 select-none pointer-events-auto transition-transform duration-300">
       {/* Collapse Toggle Handle */}
       <div className="flex justify-center -mb-2">
         <button
@@ -79,17 +79,18 @@ export const TimelineControlBar: React.FC<TimelineControlBarProps> = ({
             tacticalAudio.playTacticalClick();
             setIsCollapsed(!isCollapsed);
           }}
-          className="px-3 py-0.5 rounded-t-md bg-[#070b14]/90 border-t border-x border-sky-500/30 text-[10px] font-mono text-sky-400 hover:text-sky-200 flex items-center space-x-1 shadow-md cursor-pointer"
+          className="px-3 py-1 sm:py-0.5 rounded-t-lg bg-[#070b14]/95 border-t border-x border-sky-500/40 text-[10px] font-mono text-sky-300 hover:text-white flex items-center space-x-1 shadow-lg cursor-pointer"
         >
           {isCollapsed ? (
             <>
-              <ChevronUp className="w-3 h-3" />
-              <span>SHOW TACTICAL DOCK (H)</span>
+              <ChevronUp className="w-3.5 h-3.5 text-cyan-400 animate-bounce" />
+              <span>SHOW DOCK</span>
             </>
           ) : (
             <>
-              <ChevronDown className="w-3 h-3" />
-              <span>CINEMA MODE</span>
+              <ChevronDown className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="hidden sm:inline">CINEMA MODE</span>
+              <span className="sm:hidden">HIDE</span>
             </>
           )}
         </button>
@@ -97,80 +98,84 @@ export const TimelineControlBar: React.FC<TimelineControlBarProps> = ({
 
       {/* Main Glassmorphic Dock */}
       {!isCollapsed && (
-        <div className="hud-panel rounded-xl p-2.5 shadow-2xl border border-sky-500/25 bg-[#060a14]/90 space-y-2">
+        <div className="hud-panel rounded-xl p-2 sm:p-2.5 shadow-2xl border border-sky-500/30 bg-[#060a14]/95 space-y-2 max-h-[45vh] overflow-y-auto sm:max-h-none">
           {/* Top Bar: Playback + Time + Live Telemetry Indicators + Audio */}
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-sky-950/60 pb-2">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-2 border-b border-sky-950/60 pb-1.5 sm:pb-2">
             {/* Playback Controls */}
-            <div className="flex items-center space-x-1.5">
-              <button
-                onClick={() => {
-                  tacticalAudio.playTacticalClick();
-                  onTogglePlayPause();
-                }}
-                className={`p-1.5 rounded-md border flex items-center justify-center cursor-pointer transition-all ${
-                  isRunning
-                    ? 'bg-sky-500/20 border-sky-500/50 text-sky-300'
-                    : 'bg-amber-500/20 border-amber-500/50 text-amber-300'
-                }`}
-                title={isRunning ? 'Pause simulation (Space)' : 'Resume simulation (Space)'}
-              >
-                {isRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
-              </button>
+            <div className="flex items-center justify-between sm:justify-start space-x-1 sm:space-x-1.5 overflow-x-auto pb-0.5">
+              <div className="flex items-center space-x-1 shrink-0">
+                <button
+                  onClick={() => {
+                    tacticalAudio.playTacticalClick();
+                    onTogglePlayPause();
+                  }}
+                  className={`p-1.5 rounded-md border flex items-center justify-center cursor-pointer transition-all ${
+                    isRunning
+                      ? 'bg-sky-500/20 border-sky-500/50 text-sky-300'
+                      : 'bg-amber-500/20 border-amber-500/50 text-amber-300'
+                  }`}
+                  title={isRunning ? 'Pause simulation (Space)' : 'Resume simulation (Space)'}
+                >
+                  {isRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
+                </button>
 
-              <div className="flex items-center space-x-1 bg-slate-900/80 rounded-md p-0.5 border border-slate-800">
-                {speeds.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => {
-                      tacticalAudio.playTacticalClick();
-                      onSetSpeed(s);
-                    }}
-                    className={`px-2 py-0.5 rounded text-[11px] font-mono cursor-pointer transition-colors ${
-                      speed === s && isRunning
-                        ? 'bg-sky-500 text-slate-950 font-bold'
-                        : 'text-slate-400 hover:text-slate-200'
-                    }`}
-                  >
-                    {s}x
-                  </button>
-                ))}
+                <div className="flex items-center space-x-0.5 bg-slate-900/80 rounded-md p-0.5 border border-slate-800">
+                  {speeds.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => {
+                        tacticalAudio.playTacticalClick();
+                        onSetSpeed(s);
+                      }}
+                      className={`px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-mono cursor-pointer transition-colors ${
+                        speed === s && isRunning
+                          ? 'bg-sky-500 text-slate-950 font-bold'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      {s}x
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => {
+                    tacticalAudio.playTacticalClick();
+                    onStepForward();
+                  }}
+                  className="p-1 px-1.5 rounded bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 text-[10px] font-mono cursor-pointer"
+                  title="Step 10s forward"
+                >
+                  +10s
+                </button>
               </div>
 
-              <button
-                onClick={() => {
-                  tacticalAudio.playTacticalClick();
-                  onStepForward();
-                }}
-                className="p-1 rounded bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 text-[10px] font-mono cursor-pointer"
-                title="Step 10s forward"
-              >
-                +10s
-              </button>
+              <div className="flex items-center space-x-1 shrink-0">
+                {/* Clock */}
+                <div className="flex items-center space-x-1 px-2 py-1 rounded bg-sky-950/40 border border-sky-900/40 font-mono text-[11px] sm:text-xs text-sky-200">
+                  <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-sky-400 shrink-0" />
+                  <span className="font-bold">{metrics.simTime}</span>
+                  <span className="text-[9px] text-slate-400 hidden xs:inline sm:inline">EAT</span>
+                </div>
 
-              {/* Clock */}
-              <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded bg-sky-950/40 border border-sky-900/40 font-mono text-xs text-sky-200">
-                <Clock className="w-3.5 h-3.5 text-sky-400" />
-                <span className="font-bold">{metrics.simTime}</span>
-                <span className="text-[10px] text-slate-400">EAT (Addis)</span>
+                {/* Audio Toggle */}
+                <button
+                  onClick={handleAudioToggle}
+                  className={`p-1.5 rounded border cursor-pointer transition-all ${
+                    !isMuted
+                      ? 'bg-emerald-950/50 border-emerald-500/50 text-emerald-400'
+                      : 'bg-slate-900 border-slate-800 text-slate-500'
+                  }`}
+                  title={isMuted ? 'Unmute tactical audio' : 'Mute tactical audio'}
+                >
+                  {!isMuted ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+                </button>
               </div>
-
-              {/* Audio Toggle */}
-              <button
-                onClick={handleAudioToggle}
-                className={`p-1.5 rounded border cursor-pointer transition-all ${
-                  !isMuted
-                    ? 'bg-emerald-950/50 border-emerald-500/50 text-emerald-400'
-                    : 'bg-slate-900 border-slate-800 text-slate-500'
-                }`}
-                title={isMuted ? 'Unmute tactical audio' : 'Mute tactical audio'}
-              >
-                {!isMuted ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
-              </button>
             </div>
 
-            {/* Quick Live Telemetry Pills */}
-            <div className="flex items-center space-x-2 text-[11px] font-mono">
-              <div className="flex items-center space-x-1 px-2 py-0.5 rounded bg-slate-900/80 border border-slate-800">
+            {/* Quick Live Telemetry Pills (Horizontal Scroll on Mobile) */}
+            <div className="flex items-center space-x-1.5 text-[10px] sm:text-[11px] font-mono overflow-x-auto pb-0.5 scrollbar-none">
+              <div className="flex items-center space-x-1 px-2 py-0.5 rounded bg-slate-900/80 border border-slate-800 shrink-0">
                 <Car className="w-3 h-3 text-amber-400" />
                 <span className="text-slate-400">Traffic:</span>
                 <span
@@ -186,70 +191,70 @@ export const TimelineControlBar: React.FC<TimelineControlBarProps> = ({
                 </span>
               </div>
 
-              <div className="flex items-center space-x-1 px-2 py-0.5 rounded bg-slate-900/80 border border-slate-800">
+              <div className="flex items-center space-x-1 px-2 py-0.5 rounded bg-slate-900/80 border border-slate-800 shrink-0">
                 <Zap className="w-3 h-3 text-yellow-400" />
                 <span className="text-slate-400">Grid:</span>
-                <span className="font-bold text-yellow-300">{metrics.energyDemandMW} MW</span>
+                <span className="font-bold text-yellow-300">{metrics.energyDemandMW}M</span>
               </div>
 
-              <div className="flex items-center space-x-1 px-2 py-0.5 rounded bg-slate-900/80 border border-slate-800">
+              <div className="flex items-center space-x-1 px-2 py-0.5 rounded bg-slate-900/80 border border-slate-800 shrink-0">
                 <Activity className="w-3 h-3 text-pink-400" />
                 <span className="text-slate-400">ICU:</span>
-                <span className="font-bold text-pink-300">{metrics.availableIcuBeds} beds</span>
+                <span className="font-bold text-pink-300">{metrics.availableIcuBeds}</span>
               </div>
 
-              <div className="flex items-center space-x-1 px-2 py-0.5 rounded bg-slate-900/80 border border-slate-800">
+              <div className="flex items-center space-x-1 px-2 py-0.5 rounded bg-slate-900/80 border border-slate-800 shrink-0">
                 <Wind className="w-3 h-3 text-emerald-400" />
                 <span className="text-slate-400">AQI:</span>
                 <span className="font-bold text-emerald-300">{metrics.airQualityAQI}</span>
               </div>
 
               {metrics.rainfallIntensityMm > 0 && (
-                <div className="flex items-center space-x-1 px-2 py-0.5 rounded bg-sky-950/80 border border-sky-500/50 text-sky-300">
+                <div className="flex items-center space-x-1 px-2 py-0.5 rounded bg-sky-950/80 border border-sky-500/50 text-sky-300 shrink-0">
                   <Droplets className="w-3 h-3 text-sky-400 animate-bounce" />
-                  <span>Rain: {metrics.rainfallIntensityMm} mm/h</span>
+                  <span>Rain: {metrics.rainfallIntensityMm}mm</span>
                 </div>
               )}
             </div>
           </div>
 
           {/* Bottom Bar: Camera Presets & Shading Modes & Layers */}
-          <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-            {/* Camera Views + Drone Cam */}
-            <div className="flex items-center space-x-1 font-mono">
-              <span className="text-[10px] text-slate-400 flex items-center space-x-1 mr-1">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-2 text-xs">
+            {/* Camera Views + Drone Cam (Horizontal Scroll on Mobile) */}
+            <div className="flex items-center space-x-1 font-mono overflow-x-auto pb-0.5 scrollbar-none">
+              <span className="text-[10px] text-slate-400 flex items-center space-x-1 mr-1 shrink-0">
                 <Camera className="w-3 h-3 text-sky-400" />
                 <span>VIEW:</span>
               </span>
 
               <button
                 onClick={() => onCameraPreset('overview')}
-                className="px-2 py-0.5 rounded bg-slate-900/80 hover:bg-slate-800 text-[10px] text-slate-300 border border-slate-800 cursor-pointer"
+                className="px-2 py-0.5 rounded bg-slate-900/80 hover:bg-slate-800 text-[10px] text-slate-300 border border-slate-800 cursor-pointer shrink-0"
               >
                 Overview
               </button>
               <button
                 onClick={() => onCameraPreset('bole')}
-                className="px-2 py-0.5 rounded bg-slate-900/80 hover:bg-slate-800 text-[10px] text-slate-300 border border-slate-800 cursor-pointer"
+                className="px-2 py-0.5 rounded bg-slate-900/80 hover:bg-slate-800 text-[10px] text-slate-300 border border-slate-800 cursor-pointer shrink-0"
               >
                 Bole
               </button>
               <button
                 onClick={() => onCameraPreset('kazanchis')}
-                className="px-2 py-0.5 rounded bg-slate-900/80 hover:bg-slate-800 text-[10px] text-slate-300 border border-slate-800 cursor-pointer"
+                className="px-2 py-0.5 rounded bg-slate-900/80 hover:bg-slate-800 text-[10px] text-slate-300 border border-slate-800 cursor-pointer shrink-0"
               >
                 Kazanchis
               </button>
               <button
                 onClick={() => onCameraPreset('meskel')}
-                className="px-2 py-0.5 rounded bg-slate-900/80 hover:bg-slate-800 text-[10px] text-slate-300 border border-slate-800 cursor-pointer"
+                className="px-2 py-0.5 rounded bg-slate-900/80 hover:bg-slate-800 text-[10px] text-slate-300 border border-slate-800 cursor-pointer shrink-0"
               >
                 Meskel
               </button>
 
               <button
                 onClick={() => onCameraPreset('ambulance')}
-                className="px-2 py-0.5 rounded bg-rose-950/60 hover:bg-rose-900/60 text-[10px] text-rose-300 border border-rose-800/60 flex items-center space-x-1 cursor-pointer"
+                className="px-2 py-0.5 rounded bg-rose-950/60 hover:bg-rose-900/60 text-[10px] text-rose-300 border border-rose-800/60 flex items-center space-x-1 cursor-pointer shrink-0"
                 title="Follow emergency response unit in 3D"
               >
                 <Siren className="w-3 h-3 text-rose-400" />
@@ -259,7 +264,7 @@ export const TimelineControlBar: React.FC<TimelineControlBarProps> = ({
               {/* Core Tactical Feature: Drone Cockpit Cam */}
               <button
                 onClick={() => onCameraPreset('drone')}
-                className={`px-2.5 py-0.5 rounded text-[10px] font-bold border flex items-center space-x-1 cursor-pointer transition-all ${
+                className={`px-2.5 py-0.5 rounded text-[10px] font-bold border flex items-center space-x-1 cursor-pointer transition-all shrink-0 ${
                   isDroneCamActive
                     ? 'bg-cyan-500 text-slate-950 border-cyan-400 shadow-md shadow-cyan-500/30'
                     : 'bg-cyan-950/60 text-cyan-300 border-cyan-800 hover:bg-cyan-900/60'
@@ -267,15 +272,15 @@ export const TimelineControlBar: React.FC<TimelineControlBarProps> = ({
                 title="First-person flight through the city aboard an autonomous eVTOL drone!"
               >
                 <Plane className="w-3 h-3" />
-                <span>DRONE COCKPIT CAM</span>
+                <span>DRONE CAM</span>
               </button>
             </div>
 
             {/* Shading / Visual Modes */}
-            <div className="flex items-center space-x-1 font-mono">
+            <div className="flex items-center space-x-1 font-mono overflow-x-auto pb-0.5 scrollbar-none shrink-0">
               <span className="text-[10px] text-slate-400 flex items-center space-x-1 mr-1">
                 <Eye className="w-3 h-3 text-sky-400" />
-                <span>SHADING:</span>
+                <span className="hidden sm:inline">SHADING:</span>
               </span>
 
               {(['standard', 'thermal', 'traffic', 'cyberpunk'] as VisualShadingMode[]).map(
@@ -283,7 +288,7 @@ export const TimelineControlBar: React.FC<TimelineControlBarProps> = ({
                   <button
                     key={mode}
                     onClick={() => onShadingModeChange(mode)}
-                    className={`px-1.5 py-0.5 rounded text-[10px] uppercase cursor-pointer ${
+                    className={`px-1.5 py-0.5 rounded text-[9.5px] uppercase cursor-pointer shrink-0 ${
                       shadingMode === mode
                         ? 'bg-sky-500/20 text-sky-300 border border-sky-500/40 font-bold'
                         : 'text-slate-400 hover:text-slate-200'

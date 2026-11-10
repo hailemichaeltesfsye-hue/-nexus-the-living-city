@@ -51,7 +51,7 @@ export const BuildingInspectorModal: React.FC<BuildingInspectorModalProps> = ({
   };
 
   return (
-    <div className="fixed top-16 right-90 z-30 w-80 hud-panel rounded-xl border border-sky-500/30 bg-[#070b14]/95 shadow-2xl p-3.5 space-y-3 select-none animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed top-16 left-3 right-3 sm:left-auto sm:right-4 md:right-88 z-40 w-auto sm:w-80 max-w-[calc(100vw-1.5rem)] hud-panel rounded-xl border border-sky-500/40 bg-[#070b14]/95 shadow-2xl p-3.5 space-y-3 select-none animate-in fade-in zoom-in-95 duration-150 max-h-[85vh] overflow-y-auto">
       {/* Top Header */}
       <div className="flex items-start justify-between">
         <div className="flex items-start space-x-2.5">

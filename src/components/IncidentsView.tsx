@@ -44,9 +44,9 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
   ];
 
   return (
-    <div className="flex-1 h-full overflow-y-auto p-6 bg-[#05080f]/95 text-slate-200 select-none space-y-6">
+    <div className="flex-1 h-full overflow-y-auto p-3 sm:p-4 md:p-6 pb-28 sm:pb-32 bg-[#05080f]/95 text-slate-200 select-none space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="p-4 rounded-xl hud-panel border border-sky-500/30 bg-[#070c18]/90 flex items-center justify-between">
+      <div className="p-3 sm:p-4 rounded-xl hud-panel border border-sky-500/30 bg-[#070c18]/90 flex flex-wrap items-center justify-between gap-3">
         <div>
           <div className="flex items-center space-x-2 text-sky-400 font-display text-lg font-bold">
             <AlertTriangle className="w-5 h-5 text-rose-400" />
@@ -62,11 +62,11 @@ export const IncidentsView: React.FC<IncidentsViewProps> = ({
       </div>
 
       {/* Trigger New Incident Sandbox */}
-      <div className="p-4 rounded-xl hud-panel border border-sky-500/25 bg-[#070b14]/90 space-y-3">
+      <div className="p-3 sm:p-4 rounded-xl hud-panel border border-sky-500/25 bg-[#070b14]/90 space-y-3">
         <div className="text-xs font-mono text-slate-400">
           STRESS-TEST INCIDENT GENERATOR (CLICK TO DEPLOY INTO LIVE CITY):
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5">
           {incidentButtons.map((btn) => {
             const Icon = btn.icon;
             return (

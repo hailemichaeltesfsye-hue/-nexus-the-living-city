@@ -458,17 +458,17 @@ export const DroneCockpit: React.FC<DroneCockpitProps> = ({
   return (
     <div
       id="nexus-drone-cockpit"
-      className="fixed bottom-20 left-4 z-40 w-96 rounded-2xl bg-gradient-to-b from-slate-900/95 via-slate-900/90 to-slate-950/98 border border-cyan-500/40 shadow-[0_0_40px_rgba(0,242,255,0.2)] backdrop-blur-xl font-mono text-slate-200 overflow-hidden select-none animate-fadeIn"
+      className="fixed bottom-20 left-2 right-2 sm:left-4 sm:right-auto z-40 w-auto sm:w-96 max-w-[calc(100vw-1rem)] rounded-2xl bg-gradient-to-b from-slate-900/95 via-slate-900/90 to-slate-950/98 border border-cyan-500/40 shadow-[0_0_40px_rgba(0,242,255,0.2)] backdrop-blur-xl font-mono text-slate-200 overflow-hidden select-none animate-fadeIn max-h-[80vh] flex flex-col"
     >
       {/* ── Top Header Bar ── */}
-      <div className="flex items-center justify-between px-3.5 py-2.5 bg-slate-950/90 border-b border-slate-800">
+      <div className="flex items-center justify-between px-3.5 py-2.5 bg-slate-950/90 border-b border-slate-800 shrink-0">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
           <span className="text-[11px] font-bold tracking-wider text-cyan-300">
-            DRONE VISION HUD // MULTIMODAL
+            DRONE VISION HUD
           </span>
-          <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
-            SAM 3.1 + LLAMA
+          <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 hidden xs:inline sm:inline">
+            SAM 3.1
           </span>
         </div>
 
@@ -493,7 +493,7 @@ export const DroneCockpit: React.FC<DroneCockpitProps> = ({
       </div>
 
       {!isMinimized && (
-        <div className="space-y-2">
+        <div className="space-y-2 flex-1 overflow-y-auto">
           {/* ── Meta Model Selector Tabs ── */}
           <div className="flex items-center justify-between px-3 pt-2">
             <div className="flex bg-slate-950 rounded-lg p-0.5 border border-slate-800 text-[10px]">

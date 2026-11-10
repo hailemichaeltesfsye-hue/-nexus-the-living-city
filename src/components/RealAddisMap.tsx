@@ -753,6 +753,7 @@ export const RealAddisMap = forwardRef<ThreeCityCanvasHandle, RealAddisMapProps>
     const [isVoiceDispatchOpen, setIsVoiceDispatchOpen] = useState<boolean>(false);
     const [isDebateRoomOpen, setIsDebateRoomOpen] = useState<boolean>(false);
     const [isJudgePanelOpen, setIsJudgePanelOpen] = useState<boolean>(false);
+    const [isLandmarksOpen, setIsLandmarksOpen] = useState<boolean>(false);
 
     // Subscribe to live external Addis Ababa telemetry
     const [realtimeState, setRealtimeState] = useState<RealtimeAddisState>(() =>
@@ -1441,8 +1442,8 @@ export const RealAddisMap = forwardRef<ThreeCityCanvasHandle, RealAddisMapProps>
 
         {/* ── Crisis & Autonomous Self-Healing City Grid Telemetry Panel ── */}
         {(isCrisisPanelOpen || hazardActive) && (
-          <div className="absolute bottom-24 left-20 z-20 w-[440px] max-w-[92vw] pointer-events-auto">
-            <div className="bg-slate-950/95 backdrop-blur-xl border border-rose-500/50 rounded-2xl shadow-[0_0_40px_rgba(244,63,94,0.3)] p-3.5 overflow-hidden">
+          <div className="absolute bottom-20 sm:bottom-24 left-2 right-2 sm:left-4 sm:right-auto z-20 w-auto sm:w-[420px] max-w-[calc(100vw-1rem)] pointer-events-auto">
+            <div className="bg-slate-950/95 backdrop-blur-xl border border-rose-500/50 rounded-2xl shadow-[0_0_40px_rgba(244,63,94,0.3)] p-3 sm:p-3.5 overflow-hidden max-h-[60vh] overflow-y-auto">
               <div className="flex items-center justify-between pb-2 border-b border-rose-900/40">
                 <div className="flex items-center gap-2">
                   <ShieldAlert className="w-4 h-4 text-rose-400 animate-pulse" />
@@ -1451,8 +1452,8 @@ export const RealAddisMap = forwardRef<ThreeCityCanvasHandle, RealAddisMapProps>
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-rose-950 border border-rose-800 text-rose-300 font-bold">
-                    SECTOR: MESKEL × KAZANCHIS
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-rose-950 border border-rose-800 text-rose-300 font-bold hidden xs:inline sm:inline">
+                    MESKEL × KAZANCHIS
                   </span>
                   <button
                     onClick={() => setIsCrisisPanelOpen(false)}
@@ -1482,52 +1483,43 @@ export const RealAddisMap = forwardRef<ThreeCityCanvasHandle, RealAddisMapProps>
         )}
 
         {/* Tactical HUD Header — Addis Ababa Spatial Telemetry */}
-        <div className="absolute top-4 left-20 z-20 pointer-events-none flex items-center gap-3">
-          <div className="bg-slate-950/85 backdrop-blur-md border border-cyan-500/40 px-3.5 py-1.5 rounded-lg shadow-[0_0_20px_rgba(0,0,0,0.8)] flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]"></span>
-              <span className="font-mono text-xs font-bold text-cyan-400 tracking-wider">
-                REAL ADDIS 3D TWIN
+        <div className="absolute top-14 sm:top-4 left-2 sm:left-4 z-20 pointer-events-none flex items-center gap-2 sm:gap-3">
+          <div className="bg-slate-950/85 backdrop-blur-md border border-cyan-500/40 px-2.5 sm:px-3.5 py-1.5 rounded-lg shadow-[0_0_20px_rgba(0,0,0,0.8)] flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <span className="w-2 sm:w-2.5 h-2 sm:h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]"></span>
+              <span className="font-mono text-[11px] sm:text-xs font-bold text-cyan-400 tracking-wider">
+                REAL ADDIS 3D
               </span>
             </div>
             <div className="h-3.5 w-px bg-slate-800"></div>
-            <div className="font-mono text-[11px] text-slate-300 flex items-center gap-2">
+            <div className="font-mono text-[10px] sm:text-[11px] text-slate-300 flex items-center gap-1 sm:gap-2">
               <Navigation className="w-3 h-3 text-cyan-400 inline" />
               <span>
                 {centerCoords[1]}°N, {centerCoords[0]}°E
               </span>
             </div>
-            <div className="h-3.5 w-px bg-slate-800"></div>
-            <div className="font-mono text-[11px] text-cyan-300">
-              PITCH: <span className="text-white font-bold">{currentPitch}°</span>
-            </div>
-            <div className="h-3.5 w-px bg-slate-800"></div>
-            <div className="font-mono text-[11px] text-cyan-300">
-              ZOOM: <span className="text-white font-bold">{currentZoom}</span>
+            <div className="hidden md:flex items-center gap-2">
+              <div className="h-3.5 w-px bg-slate-800"></div>
+              <div className="font-mono text-[11px] text-cyan-300">
+                PITCH: <span className="text-white font-bold">{currentPitch}°</span>
+              </div>
+              <div className="h-3.5 w-px bg-slate-800"></div>
+              <div className="font-mono text-[11px] text-cyan-300">
+                ZOOM: <span className="text-white font-bold">{currentZoom}</span>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Top-Right Controls */}
-        <div className="absolute top-4 right-4 z-20 pointer-events-auto flex items-center gap-2 flex-wrap justify-end">
+        <div className="absolute top-14 sm:top-4 right-2 sm:right-4 z-20 pointer-events-auto flex items-center gap-1.5 sm:gap-2 flex-wrap justify-end">
           {/* Live External Weather from Open-Meteo */}
-          <div className="bg-slate-950/90 backdrop-blur-md border border-amber-500/40 px-3 py-1.5 rounded-xl shadow-lg flex items-center gap-2">
-            <CloudSun className="w-3.5 h-3.5 text-amber-400" />
+          <div className="bg-slate-950/90 backdrop-blur-md border border-amber-500/40 px-2.5 sm:px-3 py-1.5 rounded-xl shadow-lg flex items-center gap-1.5 sm:gap-2">
+            <CloudSun className="w-3.5 h-3.5 text-amber-400 shrink-0" />
             <div className="text-[10px] font-mono">
-              <span className="text-slate-400 block leading-tight">LIVE ADDIS</span>
-              <span className="text-white font-bold">
-                {realtimeState.weather.temperatureC}°C · {realtimeState.weather.weatherCondition}
-              </span>
-            </div>
-          </div>
-
-          {/* Live Arterial Traffic based on EAT rush hour */}
-          <div className="bg-slate-950/90 backdrop-blur-md border border-cyan-500/40 px-3 py-1.5 rounded-xl shadow-lg flex items-center gap-2">
-            <Car className="w-3.5 h-3.5 text-cyan-400" />
-            <div className="text-[10px] font-mono">
-              <span className="text-slate-400 block leading-tight">ARTERIAL FLOW</span>
-              <span className="text-emerald-400 font-bold">
-                {realtimeState.traffic.averageSpeedKmh} km/h ({realtimeState.traffic.overallDensityPct}%)
+              <span className="text-slate-400 hidden sm:block leading-tight text-[9px]">LIVE ADDIS</span>
+              <span className="text-white font-bold text-[10px] sm:text-[11px]">
+                {realtimeState.weather.temperatureC}°C
               </span>
             </div>
           </div>
@@ -1536,20 +1528,20 @@ export const RealAddisMap = forwardRef<ThreeCityCanvasHandle, RealAddisMapProps>
           {currentZoom > 4 ? (
             <button
               onClick={flyToOrbit}
-              className="px-3 py-1.5 rounded-xl border border-purple-500/50 bg-slate-950/90 hover:bg-purple-950/50 text-purple-300 text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-[0_0_12px_rgba(168,85,247,0.35)] cursor-pointer"
+              className="px-2.5 sm:px-3 py-1.5 rounded-xl border border-purple-500/50 bg-slate-950/90 hover:bg-purple-950/50 text-purple-300 text-[11px] sm:text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-[0_0_12px_rgba(168,85,247,0.35)] cursor-pointer"
               title="Fly out into 3D Earth Globe and Outer Space"
             >
               <Globe className="w-3.5 h-3.5 text-purple-400" />
-              <span>SPACE ORBIT</span>
+              <span>ORBIT</span>
             </button>
           ) : (
             <button
               onClick={flyToCity}
-              className="px-3 py-1.5 rounded-xl border border-cyan-400 bg-cyan-500 text-slate-950 text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-[0_0_16px_rgba(0,242,255,0.7)] cursor-pointer"
+              className="px-2.5 sm:px-3 py-1.5 rounded-xl border border-cyan-400 bg-cyan-500 text-slate-950 text-[11px] sm:text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-[0_0_16px_rgba(0,242,255,0.7)] cursor-pointer"
               title="Hypersonic descent into Addis Ababa streets"
             >
               <Rocket className="w-3.5 h-3.5" />
-              <span>DESCENT TO ADDIS</span>
+              <span>DESCENT</span>
             </button>
           )}
 
@@ -1557,32 +1549,32 @@ export const RealAddisMap = forwardRef<ThreeCityCanvasHandle, RealAddisMapProps>
           <div className="bg-slate-950/90 backdrop-blur-md border border-cyan-500/40 rounded-xl p-0.5 flex items-center shadow-lg">
             <button
               onClick={() => toggleMapStyle('satellite')}
-              className={`px-2.5 py-1.5 rounded-lg text-[11px] font-mono font-bold transition-all flex items-center gap-1 ${
+              className={`px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg text-[10px] sm:text-[11px] font-mono font-bold transition-all flex items-center gap-1 ${
                 mapStyleMode === 'satellite'
                   ? 'bg-emerald-500 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.7)]'
                   : 'text-slate-400 hover:text-white'
               }`}
               title="Real satellite photography of Addis Ababa"
             >
-              🛰️ SATELLITE
+              🛰️ <span className="hidden xs:inline">SAT</span>
             </button>
             <button
               onClick={() => toggleMapStyle('dark')}
-              className={`px-2.5 py-1.5 rounded-lg text-[11px] font-mono font-bold transition-all flex items-center gap-1 ${
+              className={`px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg text-[10px] sm:text-[11px] font-mono font-bold transition-all flex items-center gap-1 ${
                 mapStyleMode === 'dark'
                   ? 'bg-cyan-500 text-slate-950 shadow-[0_0_12px_rgba(0,242,255,0.7)]'
                   : 'text-slate-400 hover:text-white'
               }`}
               title="Cyberpunk vector night mode"
             >
-              🌃 CYBER
+              🌃 <span className="hidden xs:inline">CYBER</span>
             </button>
           </div>
 
           {/* 360 Orbit Toggle */}
           <button
             onClick={toggleOrbitAnimation}
-            className={`px-3 py-1.5 rounded-xl border text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-lg ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-xl border text-[11px] sm:text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-lg ${
               isOrbiting
                 ? 'bg-cyan-500 text-slate-950 border-cyan-300 shadow-[0_0_18px_rgba(0,242,255,0.6)]'
                 : 'bg-slate-950/90 text-cyan-400 border-cyan-500/40 hover:bg-cyan-950/50'
@@ -1590,60 +1582,66 @@ export const RealAddisMap = forwardRef<ThreeCityCanvasHandle, RealAddisMapProps>
             title="Toggle 360° skyline drone orbit"
           >
             <RotateCw className={`w-3.5 h-3.5 ${isOrbiting ? 'animate-spin' : ''}`} />
-            {isOrbiting ? 'ORBITING' : '360° ORBIT'}
+            <span className="hidden xs:inline">{isOrbiting ? 'ORBITING' : '360°'}</span>
           </button>
         </div>
 
-        {/* Left Landmark Panel — Key Addis Zones */}
-        <div className="absolute left-20 top-16 z-20 pointer-events-auto flex flex-col gap-1.5 w-[200px]">
-          <div className="text-[10px] font-mono text-cyan-400/80 font-bold tracking-wider px-1 mb-0.5">
-            📍 KEY ADDIS LANDMARKS
-          </div>
-          {REAL_ADDIS_LANDMARKS.map((landmark) => {
-            const isActive = activeBuildingId === landmark.id;
-            return (
-              <button
-                key={landmark.id}
-                onClick={() => flyToLandmark(landmark)}
-                className={`text-left px-2.5 py-1.5 rounded-xl border text-xs transition-all backdrop-blur-md flex items-center gap-2 ${
-                  isActive
-                    ? 'bg-cyan-950/90 border-cyan-400 text-white shadow-[0_0_14px_rgba(0,242,255,0.45)]'
-                    : 'bg-slate-950/80 border-slate-700/60 text-slate-300 hover:border-cyan-500/60 hover:text-white hover:bg-slate-900/80'
-                }`}
-              >
-                <span className="text-base flex-shrink-0">{landmark.icon}</span>
-                <div className="truncate min-w-0">
-                  <div className="truncate font-semibold text-[11px] leading-tight">
-                    {landmark.name.split(' ').slice(0, 2).join(' ')}
-                  </div>
-                  <div className="text-[9px] font-mono text-cyan-400/70 truncate">
-                    {landmark.category.toUpperCase()} · {landmark.status.split(' ')[0]}
-                  </div>
-                </div>
-              </button>
-            );
-          })}
+        {/* Left Landmark Panel — Key Addis Zones (Collapsible) */}
+        <div className="absolute left-2 sm:left-4 top-28 sm:top-16 z-20 pointer-events-auto flex flex-col gap-1.5">
+          <button
+            onClick={() => setIsLandmarksOpen(!isLandmarksOpen)}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-950/90 border border-cyan-500/40 text-[10.5px] font-mono text-cyan-300 hover:text-white backdrop-blur-md shadow-lg cursor-pointer transition-all"
+          >
+            <span>📍 LANDMARKS ({REAL_ADDIS_LANDMARKS.length})</span>
+            <span className="text-[9px] text-slate-400">{isLandmarksOpen ? '▲' : '▼'}</span>
+          </button>
+
+          {isLandmarksOpen && (
+            <div className="flex flex-col gap-1.5 w-[190px] sm:w-[210px] max-h-[50vh] overflow-y-auto bg-slate-950/95 p-1.5 rounded-xl border border-cyan-500/30 backdrop-blur-xl shadow-2xl animate-fadeIn">
+              {REAL_ADDIS_LANDMARKS.map((landmark) => {
+                const isActive = activeBuildingId === landmark.id;
+                return (
+                  <button
+                    key={landmark.id}
+                    onClick={() => {
+                      flyToLandmark(landmark);
+                      if (window.innerWidth < 640) setIsLandmarksOpen(false);
+                    }}
+                    className={`text-left px-2.5 py-1.5 rounded-xl border text-xs transition-all backdrop-blur-md flex items-center gap-2 cursor-pointer ${
+                      isActive
+                        ? 'bg-cyan-950/90 border-cyan-400 text-white shadow-[0_0_14px_rgba(0,242,255,0.45)]'
+                        : 'bg-slate-950/80 border-slate-700/60 text-slate-300 hover:border-cyan-500/60 hover:text-white hover:bg-slate-900/80'
+                    }`}
+                  >
+                    <span className="text-base flex-shrink-0">{landmark.icon}</span>
+                    <div className="truncate min-w-0">
+                      <div className="truncate font-semibold text-[11px] leading-tight">
+                        {landmark.name.split(' ').slice(0, 2).join(' ')}
+                      </div>
+                      <div className="text-[9px] font-mono text-cyan-400/70 truncate">
+                        {landmark.category.toUpperCase()}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Bottom HUD Bar — Status + Controls */}
-        <div className="absolute bottom-10 left-20 z-20 flex items-center gap-3 flex-wrap pointer-events-auto">
-
+        <div className="absolute bottom-16 sm:bottom-12 left-2 right-2 sm:left-4 sm:right-auto z-20 flex items-center gap-2 sm:gap-3 flex-wrap pointer-events-auto">
           {/* Layer Status Badge */}
-          <div className="bg-slate-950/80 backdrop-blur-md border border-cyan-500/25 px-3 py-1 rounded-lg flex items-center gap-3 text-[10px] font-mono shadow-lg pointer-events-none">
+          <div className="bg-slate-950/80 backdrop-blur-md border border-cyan-500/25 px-2.5 sm:px-3 py-1 rounded-lg flex items-center gap-2 sm:gap-3 text-[9.5px] sm:text-[10px] font-mono shadow-lg pointer-events-none">
             <span className="text-slate-500">ENGINE</span>
-            <span className="text-cyan-400/70">Mapbox GL · Globe 3D</span>
-            <div className="h-3 w-px bg-slate-700" />
-            <span className="text-slate-500">429 SHIELD</span>
-            <span className="text-emerald-400/80">Active · Dynamic Caching</span>
-            <div className="h-3 w-px bg-slate-700" />
-            <span className="text-slate-500">DEM</span>
-            <span className="text-cyan-400/80">
-              {currentZoom >= 11 ? 'terrain-dem-v1 Active' : 'Offloaded (Space View)'}
-            </span>
+            <span className="text-cyan-400/70">Mapbox 3D</span>
+            <div className="h-3 w-px bg-slate-700 hidden xs:block" />
+            <span className="text-slate-500 hidden xs:inline">SHIELD</span>
+            <span className="text-emerald-400/80 hidden xs:inline">Active</span>
             {hazardActive && (
               <>
                 <div className="h-3 w-px bg-slate-700" />
-                <span className="text-rose-400 animate-pulse font-bold">⚠ HAZARD OVERLAY LIVE</span>
+                <span className="text-rose-400 animate-pulse font-bold">⚠ HAZARD LIVE</span>
               </>
             )}
           </div>
